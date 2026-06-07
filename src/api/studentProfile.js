@@ -5,3 +5,6 @@ export const getStudent = (id) =>
 
 export const getStudentTimeline = (id) =>
   axiosInstance.get(`/students/${id}/timeline/`).then(r => r.data)
+
+export const createStudentEvent = (data) =>
+  axiosInstance.post('/studentEvents/', data).then(r => r.data)
