@@ -5,10 +5,11 @@ const HEBREW_MONTHS = [
   'תשרי', 'חשוון', 'כסלו', 'טבת', 'שבט', 'אדר', "אדר ב׳",
 ]
 
-export function getHebrewDateString(date = new Date()) {
+export function getHebrewDateString(date = new Date(), includeYear = true) {
   const hdate = new HDate(date)
   const day   = gematriya(hdate.getDate())
   const month = HEBREW_MONTHS[hdate.getMonth()]
+  if (!includeYear) return `${day} ב${month}`
   const year  = gematriya(hdate.getFullYear())
   return `${day} ב${month} ${year}`
 }

@@ -21,13 +21,9 @@ function formatTime(dateStr) {
   return new Date(dateStr).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })
 }
 
-function formatRelativeDate(dateStr) {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24))
-  if (diffDays === 0) return 'היום'
-  if (diffDays === 1) return 'אתמול'
-  return `לפני ${diffDays} ימים`
+function formatDate(date) {
+  const d = new Date(date)
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
 }
 
 function StatCard({ label, value, colorClass, icon }) {
@@ -115,7 +111,18 @@ export default function DashboardPage() {
   const hebrewDate = getHebrewDateString()
   const holiday    = getTodayHoliday()
 
-  const hasAlerts = upcoming_today?.length > 0 || missing_summaries?.length > 0 || at_risk_students?.count > 0
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const hebrewTomorrow   = getHebrewDateString(tomorrow)
+  const todayFormatted   = formatDate(new Date())
+  const tomorrowFormatted = formatDate(tomorrow)
+
+  const hasAlerts = missing_summaries?.length > 0 || at_risk_students?.count > 0
+
+  const todayCombined = [
+    ...(today_sessions ?? []).map(s => ({ ...s, itemType: 'session' })),
+    ...(upcoming_today ?? []).map(e => ({ ...e, itemType: 'meeting' })),
+  ].sort((a, b) => new Date(a.date) - new Date(b.date))
 
   return (
     <div>
@@ -139,19 +146,6 @@ export default function DashboardPage() {
       {/* Smart Alerts */}
       {hasAlerts && (
         <div className="space-y-3 mb-5">
-          {upcoming_today?.length > 0 && (
-            <AlertCard colorKey="blue" icon="📅" title={`${upcoming_today.length} פגישות מתוכננות להיום`}>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                {upcoming_today.slice(0, 4).map(e => (
-                  <Link key={e.id} to={`/students/${e.student_id}`} className="hover:underline">
-                    {e.student_name} {formatTime(e.date)}
-                  </Link>
-                ))}
-                {upcoming_today.length > 4 && <span>ועוד {upcoming_today.length - 4}</span>}
-              </div>
-            </AlertCard>
-          )}
-
           {missing_summaries?.length > 0 && (
             <AlertCard colorKey="orange" icon="✏️" title={`${missing_summaries.length} פגישות עבר ללא סיכום`}>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
@@ -210,33 +204,74 @@ export default function DashboardPage() {
 
       {/* Two-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Today's sessions */}
+        {/* Upcoming events — today + tomorrow */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="text-base font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
-            שיעורים להיום
+            אירועים קרובים
           </h2>
-          {today_sessions.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-8">אין שיעורים מתוכננים להיום</p>
+
+          <div className="flex items-center gap-1.5 text-xs mb-2">
+            <span className="font-semibold text-gray-500">היום</span>
+            <span className="text-gray-300">·</span>
+            <span className="text-gray-400">{todayFormatted}</span>
+            <span className="text-gray-300">·</span>
+            <span className="text-gray-400">{hebrewDate}</span>
+          </div>
+          {todayCombined.length === 0 ? (
+            <p className="text-sm text-gray-400 mb-4">אין אירועים מתוכננים להיום</p>
           ) : (
-            <ul className="space-y-3">
-              {today_sessions.map(session => (
-                <li key={session.id} className="flex items-center gap-3">
+            <ul className="space-y-2.5 mb-4">
+              {todayCombined.map(item => (
+                <li key={`${item.itemType}-${item.id}`} className="flex items-center gap-3">
                   <span className="text-xs font-mono text-gray-400 w-12 shrink-0">
-                    {formatTime(session.date)}
+                    {formatTime(item.date)}
                   </span>
-                  <span className="w-px h-4 bg-gray-200 shrink-0" />
-                  <span className="text-sm text-gray-700">{session.title}</span>
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${item.itemType === 'session' ? 'bg-green-500' : 'bg-blue-500'}`} />
+                  {item.itemType === 'meeting' ? (
+                    <Link
+                      to={`/students/${item.student_id}`}
+                      className="text-sm text-gray-700 hover:text-blue-600 truncate"
+                    >
+                      {item.student_name}
+                    </Link>
+                  ) : (
+                    <span className="text-sm text-gray-700 truncate">{item.title}</span>
+                  )}
                 </li>
               ))}
             </ul>
+          )}
+
+          {tomorrow_sessions.length > 0 && (
+            <>
+              <div className="flex items-center gap-1.5 text-xs mb-2 pt-3 border-t border-gray-100">
+                <span className="font-semibold text-gray-500">מחר</span>
+                <span className="text-gray-300">·</span>
+                <span className="text-gray-400">{tomorrowFormatted}</span>
+                <span className="text-gray-300">·</span>
+                <span className="text-gray-400">{hebrewTomorrow}</span>
+              </div>
+              <ul className="space-y-2.5">
+                {tomorrow_sessions.map(session => (
+                  <li key={session.id} className="flex items-center gap-3">
+                    <span className="text-xs font-mono text-gray-400 w-12 shrink-0">
+                      {formatTime(session.date)}
+                    </span>
+                    <span className="w-2 h-2 rounded-full shrink-0 bg-green-300" />
+                    <span className="text-sm text-gray-600 truncate">{session.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
 
         {/* Recent events */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-base font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
-            אירועים אחרונים
-          </h2>
+          <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+            <h2 className="text-base font-semibold text-gray-700">אירועים אחרונים</h2>
+            <Link to="/calendar" className="text-xs text-indigo-500 hover:text-indigo-700">הצג הכל</Link>
+          </div>
           {recent_events.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">אין אירועים השבוע</p>
           ) : (
@@ -258,7 +293,10 @@ export default function DashboardPage() {
                       {EVENT_TYPE_LABELS[event.event_type] ?? event.event_type}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400 shrink-0">{formatRelativeDate(event.date)}</span>
+                  <div className="text-xs text-gray-400 shrink-0 text-end leading-tight">
+                    <div>{formatDate(event.date)}</div>
+                    <div>{getHebrewDateString(new Date(event.date), false)}</div>
+                  </div>
                 </li>
               ))}
             </ul>
