@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createStudentEvent } from '../api/studentProfile'
+import { updateStudentEvent } from '../api/studentProfile'
 
 const EVENT_TYPE_OPTIONS = [
   { value: 'meeting',        label: 'פגישה' },
@@ -8,13 +8,12 @@ const EVENT_TYPE_OPTIONS = [
   { value: 'other',          label: 'אחר' },
 ]
 
-function nowLocalDatetime() {
-  const d = new Date()
+function toLocalDatetime(isoString) {
+  if (!isoString) return ''
+  const d = new Date(isoString)
   const pad = n => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
-
-const INITIAL_FORM = { event_type: 'meeting', date: '', title: '', agenda: '', description: '' }
 
 function parseApiError(err) {
   const data = err?.response?.data
@@ -29,19 +28,25 @@ function parseApiError(err) {
 const inputClass =
   'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
 
-export default function AddEventModal({ studentId, isOpen, onClose, onSuccess }) {
-  const [form, setForm]         = useState(INITIAL_FORM)
+export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
+  const [form, setForm]         = useState(null)
   const [saving, setSaving]     = useState(false)
   const [apiError, setApiError] = useState(null)
 
   useEffect(() => {
-    if (isOpen) {
-      setForm({ ...INITIAL_FORM, date: nowLocalDatetime() })
+    if (isOpen && event) {
+      setForm({
+        event_type:  event.event_type,
+        date:        toLocalDatetime(event.date),
+        title:       event.title,
+        agenda:      event.agenda ?? '',
+        description: event.description ?? '',
+      })
       setApiError(null)
     }
-  }, [isOpen])
+  }, [isOpen, event])
 
-  if (!isOpen) return null
+  if (!isOpen || !form) return null
 
   const isFuture = form.date ? new Date(form.date) > new Date() : false
 
@@ -55,8 +60,7 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
     setSaving(true)
     setApiError(null)
     try {
-      await createStudentEvent({
-        student:     studentId,
+      await updateStudentEvent(event.id, {
         event_type:  form.event_type,
         title:       form.title,
         agenda:      form.agenda || null,
@@ -82,7 +86,7 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-800">הוספת פגישה</h2>
+          <h2 className="text-base font-semibold text-gray-800">עריכת פגישה</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none"
@@ -143,7 +147,7 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
             />
           </div>
 
-          {/* Agenda (future) or Description (past/today) — switches as the user changes the date */}
+          {/* Future: agenda only. Past/today: show existing agenda (read-only hint) + summary */}
           {isFuture ? (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -161,20 +165,39 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
               />
             </div>
           ) : (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                סיכום הפגישה
-              </label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                rows={4}
-                placeholder="כתוב סיכום הפגישה כאן..."
-                className={`${inputClass} resize-none leading-relaxed`}
-                dir="rtl"
-              />
-            </div>
+            <>
+              {/* Show the original agenda as context if it exists */}
+              {form.agenda !== '' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    מטרת הפגישה
+                    <span className="mr-1 text-xs font-normal text-gray-400">(אג׳נדה שנקבעה)</span>
+                  </label>
+                  <textarea
+                    name="agenda"
+                    value={form.agenda}
+                    onChange={handleChange}
+                    rows={2}
+                    className={`${inputClass} resize-none leading-relaxed bg-gray-50`}
+                    dir="rtl"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  סיכום הפגישה
+                </label>
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="כתוב סיכום הפגישה כאן..."
+                  className={`${inputClass} resize-none leading-relaxed`}
+                  dir="rtl"
+                />
+              </div>
+            </>
           )}
 
           {/* Error banner */}
@@ -197,7 +220,7 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
                   שומר...
                 </>
               ) : (
-                'שמור אירוע'
+                'שמור שינויים'
               )}
             </button>
             <button

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getStudent, getStudentTimeline } from '../api/studentProfile'
 import { archiveStudent } from '../api/students'
 import AddEventModal from '../components/AddEventModal'
+import EditEventModal from '../components/EditEventModal'
 import EditStudentModal from '../components/EditStudentModal'
 
 const EVENT_TYPE_MAP = {
@@ -66,6 +67,7 @@ export default function StudentProfilePage() {
   const [error, setError]       = useState(false)
   const [showModal, setShowModal]           = useState(false)
   const [showEditModal, setShowEditModal]   = useState(false)
+  const [editingEvent, setEditingEvent]     = useState(null)
   const [archiveConfirm, setArchiveConfirm] = useState(false)
   const [archiving, setArchiving]           = useState(false)
   const [archiveError, setArchiveError]     = useState(null)
@@ -253,13 +255,32 @@ export default function StudentProfilePage() {
                   {/* Dot centered on the line */}
                   <div className="absolute right-2.5 top-4 w-3 h-3 rounded-full bg-indigo-500 ring-4 ring-white" />
                   <div className="bg-white rounded-xl border border-gray-200 p-4">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <EventTypeBadge type={item.event_type} />
-                      <span className="text-xs text-gray-400 font-mono">{item.display_date}</span>
+                    <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <EventTypeBadge type={item.event_type} />
+                        <span className="text-xs text-gray-400 font-mono">{item.display_date}</span>
+                      </div>
+                      <button
+                        onClick={() => setEditingEvent(item)}
+                        className="text-xs text-gray-400 hover:text-indigo-600 transition-colors px-2 py-0.5 rounded hover:bg-indigo-50"
+                      >
+                        עריכה
+                      </button>
                     </div>
                     <p className="text-sm font-semibold text-gray-800">{item.title}</p>
+                    {item.agenda && (
+                      <p className="text-sm text-indigo-600 mt-1 leading-relaxed">
+                        <span className="font-medium text-indigo-400 text-xs">מטרה: </span>
+                        {item.agenda}
+                      </p>
+                    )}
                     {item.description && (
-                      <p className="text-sm text-gray-500 mt-1 leading-relaxed">{item.description}</p>
+                      <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                        {item.agenda && (
+                          <span className="font-medium text-gray-400 text-xs">סיכום: </span>
+                        )}
+                        {item.description}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -280,6 +301,12 @@ export default function StudentProfilePage() {
         onClose={() => setShowEditModal(false)}
         onSuccess={() => { setShowEditModal(false); fetchData() }}
         student={student}
+      />
+      <EditEventModal
+        event={editingEvent}
+        isOpen={!!editingEvent}
+        onClose={() => setEditingEvent(null)}
+        onSuccess={() => { setEditingEvent(null); fetchData() }}
       />
     </div>
   )

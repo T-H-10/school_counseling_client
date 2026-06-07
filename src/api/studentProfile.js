@@ -8,3 +8,9 @@ export const getStudentTimeline = (id) =>
 
 export const createStudentEvent = (data) =>
   axiosInstance.post('/studentEvents/', data).then(r => r.data)
+
+export const updateStudentEvent = (id, data) =>
+  axiosInstance.patch(`/studentEvents/${id}/`, data).then(r => r.data)
+
+export const deleteStudentEvent = (id) =>
+  axiosInstance.delete(`/studentEvents/${id}/`).then(r => r.data)
