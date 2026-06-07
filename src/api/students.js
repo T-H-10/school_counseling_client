@@ -8,3 +8,6 @@ export const createStudent = (data) =>
 
 export const updateStudent = (id, data) =>
   axiosInstance.put(`/students/${id}/`, data).then(r => r.data)
+
+export const archiveStudent = (id) =>
+  axiosInstance.delete(`/students/${id}/`).then(r => r.data)

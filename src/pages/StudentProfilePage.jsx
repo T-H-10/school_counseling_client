@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getStudent, getStudentTimeline } from '../api/studentProfile'
+import { archiveStudent } from '../api/students'
 import AddEventModal from '../components/AddEventModal'
 import EditStudentModal from '../components/EditStudentModal'
 
@@ -65,6 +66,9 @@ export default function StudentProfilePage() {
   const [error, setError]       = useState(false)
   const [showModal, setShowModal]           = useState(false)
   const [showEditModal, setShowEditModal]   = useState(false)
+  const [archiveConfirm, setArchiveConfirm] = useState(false)
+  const [archiving, setArchiving]           = useState(false)
+  const [archiveError, setArchiveError]     = useState(null)
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -81,6 +85,19 @@ export default function StudentProfilePage() {
   useEffect(() => {
     fetchData()
   }, [fetchData])
+
+  const handleArchive = async () => {
+    setArchiving(true)
+    setArchiveError(null)
+    try {
+      await archiveStudent(id)
+      navigate('/students')
+    } catch {
+      setArchiveError('שגיאה במחיקת התלמיד. אנא נסה שוב.')
+      setArchiving(false)
+      setArchiveConfirm(false)
+    }
+  }
 
   const hasContact = student && (
     student.mother_name || student.mother_phone ||
@@ -145,7 +162,41 @@ export default function StudentProfilePage() {
                   >
                     עריכה
                   </button>
+                  {!archiveConfirm ? (
+                    <button
+                      onClick={() => setArchiveConfirm(true)}
+                      className="border border-gray-200 hover:border-red-300 hover:bg-red-50 text-gray-400 hover:text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                    >
+                      מחיקה
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5">
+                      <span className="text-xs text-red-700">האם למחוק את התלמיד? הוא לא יופיע יותר במערכת.</span>
+                      <button
+                        onClick={handleArchive}
+                        disabled={archiving}
+                        className="text-xs font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60 px-3 py-1 rounded-md transition-colors flex items-center gap-1"
+                      >
+                        {archiving && (
+                          <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
+                        )}
+                        כן, מחק
+                      </button>
+                      <button
+                        onClick={() => setArchiveConfirm(false)}
+                        disabled={archiving}
+                        className="text-xs text-red-600 hover:text-red-800 disabled:opacity-40 px-2 py-1 rounded-md transition-colors"
+                      >
+                        ביטול
+                      </button>
+                    </div>
+                  )}
                 </div>
+                {archiveError && (
+                  <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-600">
+                    {archiveError}
+                  </div>
+                )}
               </div>
             </div>
           </div>
