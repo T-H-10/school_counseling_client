@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getStudents } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
 import AddStudentModal from '../components/AddStudentModal'
+import ImportStudentsModal from '../components/ImportStudentsModal'
 
 const PAGE_SIZE = 20
 
@@ -27,8 +28,9 @@ export default function StudentsPage() {
   const [classLevel, setClassLevel]   = useState('')
   const [page, setPage]               = useState(1)
   const [classLevels, setClassLevels] = useState([])
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [refreshKey, setRefreshKey]     = useState(0)
+  const [showAddModal, setShowAddModal]       = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [refreshKey, setRefreshKey]           = useState(0)
 
   // Fetch class levels once on mount for the dropdown
   useEffect(() => {
@@ -77,12 +79,20 @@ export default function StudentsPage() {
             <p className="text-sm text-gray-400 mt-1">{data.count} תלמידים סה״כ</p>
           )}
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
-        >
-          + הוסף תלמיד
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-600 hover:text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+          >
+            ייבוא מ-Excel
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+          >
+            + הוסף תלמיד
+          </button>
+        </div>
       </div>
 
       {/* Filter bar */}
@@ -189,6 +199,11 @@ export default function StudentsPage() {
       isOpen={showAddModal}
       onClose={() => setShowAddModal(false)}
       onSuccess={() => { setShowAddModal(false); setRefreshKey(k => k + 1) }}
+    />
+    <ImportStudentsModal
+      isOpen={showImportModal}
+      onClose={() => setShowImportModal(false)}
+      onSuccess={() => setRefreshKey(k => k + 1)}
     />
     </>
   )
