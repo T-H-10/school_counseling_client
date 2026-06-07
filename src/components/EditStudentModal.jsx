@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { updateStudent } from '../api/students'
 
 function parseApiErrors(err) {
@@ -41,7 +42,6 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
   const [form, setForm]               = useState({})
   const [saving, setSaving]           = useState(false)
   const [fieldErrors, setFieldErrors] = useState({})
-  const [generalError, setGeneralError] = useState(null)
 
   useEffect(() => {
     if (!isOpen || !student) return
@@ -55,7 +55,6 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
       father_phone: student.father_phone ?? '',
     })
     setFieldErrors({})
-    setGeneralError(null)
   }, [isOpen, student])
 
   if (!isOpen || !student) return null
@@ -72,7 +71,6 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
     e.preventDefault()
     setSaving(true)
     setFieldErrors({})
-    setGeneralError(null)
 
     const payload = Object.fromEntries(
       Object.entries(form).filter(([, v]) => v !== '')
@@ -80,11 +78,12 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
 
     try {
       await updateStudent(student.id, payload)
+      toast.success('פרטי התלמיד עודכנו בהצלחה')
       onSuccess()
     } catch (err) {
       const { fields, general } = parseApiErrors(err)
       setFieldErrors(fields)
-      setGeneralError(general)
+      if (general) toast.error(general)
     } finally {
       setSaving(false)
     }
@@ -223,12 +222,6 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
               <FieldError msg={fieldErrors.father_phone} />
             </div>
           </div>
-
-          {generalError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {generalError}
-            </div>
-          )}
 
           <div className="flex items-center gap-3 pt-1">
             <button

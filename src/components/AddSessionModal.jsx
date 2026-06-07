@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { createClassSession } from '../api/classSessions'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
@@ -35,8 +36,7 @@ export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
   const [form, setForm]             = useState(INITIAL_FORM)
   const [classLevels, setClassLevels] = useState([])
   const [schoolYears, setSchoolYears] = useState([])
-  const [saving, setSaving]         = useState(false)
-  const [apiError, setApiError]     = useState(null)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     getClassLevels().then(data => {
@@ -51,7 +51,6 @@ export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
   useEffect(() => {
     if (isOpen) {
       setForm({ ...INITIAL_FORM, date: nowLocalDatetime() })
-      setApiError(null)
     }
   }, [isOpen])
 
@@ -65,7 +64,6 @@ export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
-    setApiError(null)
     try {
       await createClassSession({
         title:       form.title,
@@ -75,9 +73,10 @@ export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
         end_date:    form.end_date ? new Date(form.end_date).toISOString() : null,
         summary:     form.summary || null,
       })
+      toast.success('השיעור נשמר בהצלחה')
       onSuccess()
     } catch (err) {
-      setApiError(parseApiError(err))
+      toast.error(parseApiError(err))
     } finally {
       setSaving(false)
     }
@@ -211,13 +210,6 @@ export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
               dir="rtl"
             />
           </div>
-
-          {/* Error banner */}
-          {apiError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {apiError}
-            </div>
-          )}
 
           {/* Actions */}
           <div className="flex items-center gap-3 pt-1">

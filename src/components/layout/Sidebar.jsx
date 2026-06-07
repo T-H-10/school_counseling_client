@@ -45,10 +45,10 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="fixed top-0 right-0 h-full w-64 bg-white border-l border-gray-200 flex flex-col z-20">
-      <div className="px-6 py-5 border-b border-gray-200">
-        <h1 className="text-lg font-bold text-blue-700 leading-tight">מערכת ייעוץ</h1>
-        <p className="text-xs text-gray-400 mt-0.5">בית ספרי</p>
+    <aside className="fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col z-20">
+      <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-lg font-bold text-blue-700 dark:text-blue-400 leading-tight">מערכת ייעוץ</h1>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">בית ספרי</p>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -60,8 +60,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
               }`
             }
           >

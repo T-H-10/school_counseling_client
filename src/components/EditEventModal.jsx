@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { updateStudentEvent } from '../api/studentProfile'
 
 const EVENT_TYPE_OPTIONS = [
@@ -29,9 +30,8 @@ const inputClass =
   'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
 
 export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
-  const [form, setForm]         = useState(null)
-  const [saving, setSaving]     = useState(false)
-  const [apiError, setApiError] = useState(null)
+  const [form, setForm]     = useState(null)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (isOpen && event) {
@@ -42,7 +42,6 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
         agenda:      event.agenda ?? '',
         description: event.description ?? '',
       })
-      setApiError(null)
     }
   }, [isOpen, event])
 
@@ -58,7 +57,6 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
-    setApiError(null)
     try {
       await updateStudentEvent(event.id, {
         event_type:  form.event_type,
@@ -67,9 +65,10 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
         description: form.description || null,
         date:        new Date(form.date).toISOString(),
       })
+      toast.success('הפגישה עודכנה בהצלחה')
       onSuccess()
     } catch (err) {
-      setApiError(parseApiError(err))
+      toast.error(parseApiError(err))
     } finally {
       setSaving(false)
     }
@@ -198,13 +197,6 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
                 />
               </div>
             </>
-          )}
-
-          {/* Error banner */}
-          {apiError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {apiError}
-            </div>
           )}
 
           {/* Actions */}

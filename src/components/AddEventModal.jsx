@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { createStudentEvent } from '../api/studentProfile'
 
 const EVENT_TYPE_OPTIONS = [
@@ -30,14 +31,12 @@ const inputClass =
   'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
 
 export default function AddEventModal({ studentId, isOpen, onClose, onSuccess }) {
-  const [form, setForm]         = useState(INITIAL_FORM)
-  const [saving, setSaving]     = useState(false)
-  const [apiError, setApiError] = useState(null)
+  const [form, setForm]     = useState(INITIAL_FORM)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
       setForm({ ...INITIAL_FORM, date: nowLocalDatetime() })
-      setApiError(null)
     }
   }, [isOpen])
 
@@ -53,7 +52,6 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
-    setApiError(null)
     try {
       await createStudentEvent({
         student:     studentId,
@@ -63,9 +61,10 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
         description: form.description || null,
         date:        new Date(form.date).toISOString(),
       })
+      toast.success('הפגישה נשמרה בהצלחה')
       onSuccess()
     } catch (err) {
-      setApiError(parseApiError(err))
+      toast.error(parseApiError(err))
     } finally {
       setSaving(false)
     }
@@ -174,13 +173,6 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
                 className={`${inputClass} resize-none leading-relaxed`}
                 dir="rtl"
               />
-            </div>
-          )}
-
-          {/* Error banner */}
-          {apiError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {apiError}
             </div>
           )}
 

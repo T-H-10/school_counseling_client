@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { createStudent } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
@@ -56,7 +57,6 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
   const [form, setForm]               = useState(INITIAL_FORM)
   const [saving, setSaving]           = useState(false)
   const [fieldErrors, setFieldErrors] = useState({})
-  const [generalError, setGeneralError] = useState(null)
   const [schoolYears, setSchoolYears] = useState([])
   const [classLevels, setClassLevels] = useState([])
   const [loadingLists, setLoadingLists] = useState(false)
@@ -65,7 +65,6 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
     if (!isOpen) return
     setForm(INITIAL_FORM)
     setFieldErrors({})
-    setGeneralError(null)
     setLoadingLists(true)
     Promise.all([getSchoolYears(), getClassLevels()])
       .then(([sy, cl]) => {
@@ -90,7 +89,6 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
     e.preventDefault()
     setSaving(true)
     setFieldErrors({})
-    setGeneralError(null)
 
     const payload = Object.fromEntries(
       Object.entries(form).filter(([, v]) => v !== '')
@@ -101,11 +99,12 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
 
     try {
       await createStudent(payload)
+      toast.success('התלמיד נוסף בהצלחה')
       onSuccess()
     } catch (err) {
       const { fields, general } = parseApiErrors(err)
       setFieldErrors(fields)
-      setGeneralError(general)
+      if (general) toast.error(general)
     } finally {
       setSaving(false)
     }
@@ -306,13 +305,6 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
               <FieldError msg={fieldErrors.father_phone} />
             </div>
           </div>
-
-          {/* General (non-field) error */}
-          {generalError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {generalError}
-            </div>
-          )}
 
           <div className="flex items-center gap-3 pt-1">
             <button

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import AsyncSelect from 'react-select/async'
 import { createStudentEvent } from '../api/studentProfile'
 import { createClassSession } from '../api/classSessions'
@@ -64,8 +65,8 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
   const [schoolYears, setSchoolYears] = useState([])
   const [classLevel, setClassLevel]   = useState('')
   const [schoolYear, setSchoolYear]   = useState('')
-  const [saving, setSaving]       = useState(false)
-  const [apiError, setApiError]   = useState(null)
+  const [saving, setSaving]           = useState(false)
+  const [validationError, setValidationError] = useState(null)
 
   useEffect(() => {
     getClassLevels().then(d => setClassLevels(Array.isArray(d) ? d : d.results ?? [])).catch(() => {})
@@ -85,7 +86,7 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
       setTitle('')
       setClassLevel('')
       setSchoolYear('')
-      setApiError(null)
+      setValidationError(null)
     }
   }, [isOpen, slotStart, slotEnd])
 
@@ -107,11 +108,11 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (mode === 'event' && !student) {
-      setApiError('יש לבחור תלמיד')
+      setValidationError('יש לבחור תלמיד')
       return
     }
+    setValidationError(null)
     setSaving(true)
-    setApiError(null)
     try {
       if (mode === 'event') {
         await createStudentEvent({
@@ -120,6 +121,7 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
           title,
           date:       new Date(startDt).toISOString(),
         })
+        toast.success('הפגישה נשמרה בהצלחה')
       } else {
         await createClassSession({
           title,
@@ -128,10 +130,11 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
           date:        new Date(startDt).toISOString(),
           end_date:    endDt ? new Date(endDt).toISOString() : null,
         })
+        toast.success('השיעור נשמר בהצלחה')
       }
       onSuccess()
     } catch (err) {
-      setApiError(parseApiError(err))
+      toast.error(parseApiError(err))
     } finally {
       setSaving(false)
     }
@@ -315,10 +318,10 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
             </div>
           </div>
 
-          {/* Error banner */}
-          {apiError && (
+          {/* Validation error (student not selected) */}
+          {validationError && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {apiError}
+              {validationError}
             </div>
           )}
 
