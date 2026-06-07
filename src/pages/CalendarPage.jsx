@@ -1,0 +1,147 @@
+import { useState, useEffect, useCallback } from 'react'
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
+import moment from 'moment'
+import 'moment/locale/he'
+import 'react-big-calendar/lib/css/react-big-calendar.css'
+import { getCalendarEvents } from '../api/calendar'
+import EventDetailPanel from '../components/EventDetailPanel'
+
+moment.locale('he')
+moment.updateLocale('he', { week: { dow: 0, doy: 6 } })
+
+const localizer = momentLocalizer(moment)
+
+const messages = {
+  today: 'היום',
+  previous: 'הקודם',
+  next: 'הבא',
+  month: 'חודש',
+  week: 'שבוע',
+  day: 'יום',
+  agenda: 'רשימה',
+  date: 'תאריך',
+  time: 'שעה',
+  event: 'אירוע',
+  noEventsInRange: 'אין אירועים בטווח זה',
+  showMore: total => `+${total} נוספים`,
+}
+
+function mapEvents(data) {
+  return data.map(e => ({
+    id: e.id,
+    title: e.title,
+    start: new Date(e.start),
+    end: e.end
+      ? new Date(e.end)
+      : new Date(new Date(e.start).getTime() + 30 * 60 * 1000),
+    resource: { type: e.type, with: e.with },
+  }))
+}
+
+function eventPropGetter(event) {
+  const isSession = event.resource?.type === 'class_session'
+  return {
+    style: {
+      backgroundColor: isSession ? '#16a34a' : '#2563eb',
+      borderColor: isSession ? '#15803d' : '#1d4ed8',
+      color: 'white',
+      borderRadius: '4px',
+      fontSize: '12px',
+      padding: '2px 4px',
+    },
+  }
+}
+
+export default function CalendarPage() {
+  const [events, setEvents]               = useState([])
+  const [loading, setLoading]             = useState(true)
+  const [view, setView]                   = useState(Views.WEEK)
+  const [date, setDate]                   = useState(new Date())
+  const [selectedEvent, setSelectedEvent] = useState(null)
+
+  const fetchEvents = useCallback((start, end) => {
+    setLoading(true)
+    getCalendarEvents(start, end)
+      .then(data => setEvents(mapEvents(Array.isArray(data) ? data : [])))
+      .catch(() => setEvents([]))
+      .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    const start = moment().startOf('week').toDate()
+    const end   = moment().endOf('week').toDate()
+    fetchEvents(start, end)
+  }, [fetchEvents])
+
+  const handleRangeChange = useCallback((range) => {
+    let start, end
+    if (Array.isArray(range)) {
+      start = range[0]
+      end   = moment(range[range.length - 1]).endOf('day').toDate()
+    } else {
+      start = range.start
+      end   = range.end
+    }
+    fetchEvents(start, end)
+  }, [fetchEvents])
+
+  return (
+    <div>
+      {/* Page header */}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">לוח שנה</h1>
+          <p className="text-sm text-gray-400 mt-0.5">פגישות ושיעורים מתוזמנים</p>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-5 text-sm text-gray-600">
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded bg-blue-600 inline-block shrink-0" />
+            פגישות אישיות
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded bg-green-600 inline-block shrink-0" />
+            שיעורים קבוצתיים
+          </span>
+        </div>
+      </div>
+
+      {/* Loading indicator */}
+      {loading && (
+        <div className="h-0.5 bg-indigo-100 rounded overflow-hidden mb-3">
+          <div className="h-full bg-indigo-500 animate-pulse" style={{ width: '60%' }} />
+        </div>
+      )}
+
+      {/* Calendar card */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div style={{ height: 'calc(100vh - 248px)', direction: 'rtl' }}>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            view={view}
+            date={date}
+            onView={setView}
+            onNavigate={setDate}
+            onRangeChange={handleRangeChange}
+            onSelectEvent={setSelectedEvent}
+            eventPropGetter={eventPropGetter}
+            messages={messages}
+            rtl
+            culture="he"
+            views={[Views.WEEK, Views.DAY, Views.MONTH]}
+            popup
+          />
+        </div>
+      </div>
+
+      {selectedEvent && (
+        <EventDetailPanel
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
+    </div>
+  )
+}
