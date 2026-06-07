@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getStudent, getStudentTimeline } from '../api/studentProfile'
 import AddEventModal from '../components/AddEventModal'
+import EditStudentModal from '../components/EditStudentModal'
 
 const EVENT_TYPE_MAP = {
   meeting:        { label: 'פגישה',       classes: 'bg-indigo-100 text-indigo-700' },
@@ -62,7 +63,8 @@ export default function StudentProfilePage() {
   const [timeline, setTimeline] = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState(false)
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal]           = useState(false)
+  const [showEditModal, setShowEditModal]   = useState(false)
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -130,12 +132,20 @@ export default function StudentProfilePage() {
                   )}
                 </div>
                 <p className="text-sm text-gray-500 font-mono mb-4">ת.ז. {student.id_number}</p>
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                >
-                  + הוסף פגישה
-                </button>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                  >
+                    + הוסף פגישה
+                  </button>
+                  <button
+                    onClick={() => setShowEditModal(true)}
+                    className="border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-600 hover:text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                  >
+                    עריכה
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -213,6 +223,12 @@ export default function StudentProfilePage() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onSuccess={() => { setShowModal(false); fetchData() }}
+      />
+      <EditStudentModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSuccess={() => { setShowEditModal(false); fetchData() }}
+        student={student}
       />
     </div>
   )

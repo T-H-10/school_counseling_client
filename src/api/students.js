@@ -5,3 +5,6 @@ export const getStudents = (params = {}) =>
 
 export const createStudent = (data) =>
   axiosInstance.post('/students/', data).then(r => r.data)
+
+export const updateStudent = (id, data) =>
+  axiosInstance.put(`/students/${id}/`, data).then(r => r.data)
