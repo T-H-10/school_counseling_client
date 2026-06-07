@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getDashboard } from '../api/dashboard'
+import { getHebrewDateString, getTodayHoliday } from '../utils/hebrewDate'
 
 const EVENT_TYPE_LABELS = {
   meeting: 'פגישה',
@@ -28,14 +29,6 @@ function formatRelativeDate(dateStr) {
   return `לפני ${diffDays} ימים`
 }
 
-function todayHebrewLabel() {
-  return new Date().toLocaleDateString('he-IL', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
 
 function StatCard({ label, value, colorClass, icon }) {
   return (
@@ -101,13 +94,26 @@ export default function DashboardPage() {
 
   const { today_sessions, tomorrow_sessions, recent_events, stats, alerts } = data
   const atRisk = alerts?.students_without_contact
+  const hebrewDate = getHebrewDateString()
+  const holiday    = getTodayHoliday()
 
   return (
     <div>
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">לוח בקרה</h1>
-        <p className="text-sm text-gray-400 mt-1">{todayHebrewLabel()}</p>
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <p className="text-sm text-gray-400">
+            {new Date().toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
+          <span className="text-gray-300 text-sm">·</span>
+          <p className="text-sm text-indigo-500 font-medium">{hebrewDate}</p>
+          {holiday && (
+            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+              ✡ {holiday}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Alert banner */}
