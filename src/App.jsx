@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import StudentsPage from './pages/StudentsPage'
 import StudentProfilePage from './pages/StudentProfilePage'
+import SessionsPage from './pages/SessionsPage'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route index element={<DashboardPage />} />
             <Route path="students" element={<StudentsPage />} />
             <Route path="students/:id" element={<StudentProfilePage />} />
+            <Route path="sessions" element={<SessionsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
