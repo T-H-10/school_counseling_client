@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getStudents } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
+import AddStudentModal from '../components/AddStudentModal'
 
 const PAGE_SIZE = 20
 
@@ -26,6 +27,8 @@ export default function StudentsPage() {
   const [classLevel, setClassLevel]   = useState('')
   const [page, setPage]               = useState(1)
   const [classLevels, setClassLevels] = useState([])
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [refreshKey, setRefreshKey]     = useState(0)
 
   // Fetch class levels once on mount for the dropdown
   useEffect(() => {
@@ -54,7 +57,7 @@ export default function StudentsPage() {
       .then(setData)
       .catch(() => setError(true))
       .finally(() => setLoading(false))
-  }, [debouncedSearch, classLevel, page])
+  }, [debouncedSearch, classLevel, page, refreshKey])
 
   const handleClassLevelChange = (val) => {
     setClassLevel(val)
@@ -64,13 +67,22 @@ export default function StudentsPage() {
   const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 0
 
   return (
+    <>
     <div>
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">תלמידים</h1>
-        {data && (
-          <p className="text-sm text-gray-400 mt-1">{data.count} תלמידים סה״כ</p>
-        )}
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">תלמידים</h1>
+          {data && (
+            <p className="text-sm text-gray-400 mt-1">{data.count} תלמידים סה״כ</p>
+          )}
+        </div>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+        >
+          + הוסף תלמיד
+        </button>
       </div>
 
       {/* Filter bar */}
@@ -172,5 +184,12 @@ export default function StudentsPage() {
         )}
       </div>
     </div>
+
+    <AddStudentModal
+      isOpen={showAddModal}
+      onClose={() => setShowAddModal(false)}
+      onSuccess={() => { setShowAddModal(false); setRefreshKey(k => k + 1) }}
+    />
+    </>
   )
 }
