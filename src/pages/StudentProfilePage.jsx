@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getStudent, getStudentTimeline } from '../api/studentProfile'
+import AddEventModal from '../components/AddEventModal'
 
 const EVENT_TYPE_MAP = {
   meeting:        { label: 'פגישה',       classes: 'bg-indigo-100 text-indigo-700' },
@@ -61,8 +62,9 @@ export default function StudentProfilePage() {
   const [timeline, setTimeline] = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     setLoading(true)
     setError(false)
     Promise.all([getStudent(id), getStudentTimeline(id)])
@@ -73,6 +75,10 @@ export default function StudentProfilePage() {
       .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [id])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const hasContact = student && (
     student.mother_name || student.mother_phone ||
@@ -125,7 +131,7 @@ export default function StudentProfilePage() {
                 </div>
                 <p className="text-sm text-gray-500 font-mono mb-4">ת.ז. {student.id_number}</p>
                 <button
-                  onClick={() => {}}
+                  onClick={() => setShowModal(true)}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                 >
                   + הוסף פגישה
@@ -201,6 +207,13 @@ export default function StudentProfilePage() {
           )}
         </>
       )}
+
+      <AddEventModal
+        studentId={id}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSuccess={() => { setShowModal(false); fetchData() }}
+      />
     </div>
   )
 }
