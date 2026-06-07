@@ -1,39 +1,79 @@
 import { useState, useEffect } from 'react'
 import { createStudent } from '../api/students'
+import { getClassLevels } from '../api/classLevels'
+import { getSchoolYears } from '../api/schoolYears'
 
-function parseApiError(err) {
+function parseApiErrors(err) {
   const data = err?.response?.data
-  if (!data) return 'שגיאה בשמירה, אנא נסה שוב'
-  if (typeof data === 'string') return data
-  const first = Object.values(data)[0]
-  if (Array.isArray(first)) return first[0]
-  if (typeof first === 'string') return first
-  return 'שגיאה בשמירה, אנא נסה שוב'
+  if (!data) return { fields: {}, general: 'שגיאה בשמירה, אנא נסה שוב' }
+  if (typeof data === 'string') return { fields: {}, general: data }
+  if (typeof data === 'object') {
+    const fields = {}
+    let general = null
+    for (const [key, val] of Object.entries(data)) {
+      const msg = Array.isArray(val) ? val[0] : val
+      const str = typeof msg === 'string' ? msg : JSON.stringify(msg)
+      if (key === 'non_field_errors' || key === 'detail') {
+        general = str
+      } else {
+        fields[key] = str
+      }
+    }
+    return { fields, general: general ?? (Object.keys(fields).length === 0 ? 'שגיאה בשמירה, אנא נסה שוב' : null) }
+  }
+  return { fields: {}, general: 'שגיאה בשמירה, אנא נסה שוב' }
 }
 
 const INITIAL_FORM = {
   full_name: '',
   id_number: '',
   address: '',
+  school_year: '',
+  class_level: '',
+  class_number: '',
   mother_name: '',
   mother_phone: '',
   father_name: '',
   father_phone: '',
 }
 
-const inputClass =
-  'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
+const sectionLabel = 'text-xs font-semibold text-gray-400 uppercase tracking-wide pt-1'
+
+function fieldClass(err) {
+  return `w-full border rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 bg-white ${
+    err
+      ? 'border-red-400 focus:ring-red-200 text-gray-700'
+      : 'border-gray-200 focus:ring-indigo-300 text-gray-700'
+  }`
+}
+
+function FieldError({ msg }) {
+  if (!msg) return null
+  return <p className="text-xs text-red-500 mt-1">{msg}</p>
+}
 
 export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
-  const [form, setForm]         = useState(INITIAL_FORM)
-  const [saving, setSaving]     = useState(false)
-  const [apiError, setApiError] = useState(null)
+  const [form, setForm]               = useState(INITIAL_FORM)
+  const [saving, setSaving]           = useState(false)
+  const [fieldErrors, setFieldErrors] = useState({})
+  const [generalError, setGeneralError] = useState(null)
+  const [schoolYears, setSchoolYears] = useState([])
+  const [classLevels, setClassLevels] = useState([])
+  const [loadingLists, setLoadingLists] = useState(false)
 
   useEffect(() => {
-    if (isOpen) {
-      setForm(INITIAL_FORM)
-      setApiError(null)
-    }
+    if (!isOpen) return
+    setForm(INITIAL_FORM)
+    setFieldErrors({})
+    setGeneralError(null)
+    setLoadingLists(true)
+    Promise.all([getSchoolYears(), getClassLevels()])
+      .then(([sy, cl]) => {
+        setSchoolYears(sy.results ?? sy)
+        setClassLevels(cl.results ?? cl)
+      })
+      .catch(() => {})
+      .finally(() => setLoadingLists(false))
   }, [isOpen])
 
   if (!isOpen) return null
@@ -41,20 +81,31 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm(f => ({ ...f, [name]: value }))
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => { const next = { ...prev }; delete next[name]; return next })
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
-    setApiError(null)
+    setFieldErrors({})
+    setGeneralError(null)
+
     const payload = Object.fromEntries(
       Object.entries(form).filter(([, v]) => v !== '')
     )
+    if (payload.class_number) {
+      payload.class_number = parseInt(payload.class_number, 10)
+    }
+
     try {
       await createStudent(payload)
       onSuccess()
     } catch (err) {
-      setApiError(parseApiError(err))
+      const { fields, general } = parseApiErrors(err)
+      setFieldErrors(fields)
+      setGeneralError(general)
     } finally {
       setSaving(false)
     }
@@ -63,7 +114,7 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
   return (
     <div
       className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
         className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
@@ -80,7 +131,9 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">פרטי תלמיד</p>
+
+          {/* ── Personal details ── */}
+          <p className={sectionLabel}>פרטי תלמיד</p>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -92,10 +145,11 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
               value={form.full_name}
               onChange={handleChange}
               placeholder="שם פרטי ושם משפחה"
-              className={inputClass}
+              className={fieldClass(fieldErrors.full_name)}
               maxLength={150}
               required
             />
+            <FieldError msg={fieldErrors.full_name} />
           </div>
 
           <div>
@@ -108,10 +162,11 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
               value={form.id_number}
               onChange={handleChange}
               placeholder="8–9 ספרות"
-              className={`${inputClass} font-mono`}
+              className={`${fieldClass(fieldErrors.id_number)} font-mono`}
               maxLength={9}
               required
             />
+            <FieldError msg={fieldErrors.id_number} />
           </div>
 
           <div>
@@ -122,12 +177,76 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
               value={form.address}
               onChange={handleChange}
               placeholder="כתובת מגורים"
-              className={inputClass}
+              className={fieldClass(fieldErrors.address)}
               maxLength={255}
             />
+            <FieldError msg={fieldErrors.address} />
           </div>
 
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide pt-1">פרטי הורים</p>
+          {/* ── Enrollment ── */}
+          <p className={sectionLabel}>שיוך לכיתה</p>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              שנת לימודים <span className="text-red-400">*</span>
+            </label>
+            <select
+              name="school_year"
+              value={form.school_year}
+              onChange={handleChange}
+              className={fieldClass(fieldErrors.school_year)}
+              required
+              disabled={loadingLists}
+            >
+              <option value="">בחר שנת לימודים</option>
+              {schoolYears.map(sy => (
+                <option key={sy.id} value={sy.id}>{sy.name}</option>
+              ))}
+            </select>
+            <FieldError msg={fieldErrors.school_year} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                שכבה <span className="text-red-400">*</span>
+              </label>
+              <select
+                name="class_level"
+                value={form.class_level}
+                onChange={handleChange}
+                className={fieldClass(fieldErrors.class_level)}
+                required
+                disabled={loadingLists}
+              >
+                <option value="">בחר שכבה</option>
+                {classLevels.map(cl => (
+                  <option key={cl.id} value={cl.id}>{cl.name}</option>
+                ))}
+              </select>
+              <FieldError msg={fieldErrors.class_level} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                מספר כיתה <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="number"
+                name="class_number"
+                value={form.class_number}
+                onChange={handleChange}
+                placeholder="1"
+                className={`${fieldClass(fieldErrors.class_number)} font-mono`}
+                min={1}
+                max={99}
+                required
+              />
+              <FieldError msg={fieldErrors.class_number} />
+            </div>
+          </div>
+
+          {/* ── Parent details ── */}
+          <p className={sectionLabel}>פרטי הורים</p>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -138,9 +257,10 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
                 value={form.mother_name}
                 onChange={handleChange}
                 placeholder="שם האם"
-                className={inputClass}
+                className={fieldClass(fieldErrors.mother_name)}
                 maxLength={100}
               />
+              <FieldError msg={fieldErrors.mother_name} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">טלפון אם</label>
@@ -150,9 +270,10 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
                 value={form.mother_phone}
                 onChange={handleChange}
                 placeholder="05X-XXXXXXX"
-                className={`${inputClass} font-mono`}
+                className={`${fieldClass(fieldErrors.mother_phone)} font-mono`}
                 maxLength={20}
               />
+              <FieldError msg={fieldErrors.mother_phone} />
             </div>
           </div>
 
@@ -165,9 +286,10 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
                 value={form.father_name}
                 onChange={handleChange}
                 placeholder="שם האב"
-                className={inputClass}
+                className={fieldClass(fieldErrors.father_name)}
                 maxLength={100}
               />
+              <FieldError msg={fieldErrors.father_name} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">טלפון אב</label>
@@ -177,22 +299,24 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
                 value={form.father_phone}
                 onChange={handleChange}
                 placeholder="05X-XXXXXXX"
-                className={`${inputClass} font-mono`}
+                className={`${fieldClass(fieldErrors.father_phone)} font-mono`}
                 maxLength={20}
               />
+              <FieldError msg={fieldErrors.father_phone} />
             </div>
           </div>
 
-          {apiError && (
+          {/* General (non-field) error */}
+          {generalError && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
-              {apiError}
+              {generalError}
             </div>
           )}
 
           <div className="flex items-center gap-3 pt-1">
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || loadingLists}
               className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               {saving ? (
