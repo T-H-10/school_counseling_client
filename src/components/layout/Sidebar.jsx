@@ -43,33 +43,46 @@ const navItems = [
   },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   return (
-    <aside className="fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col z-20">
-      <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-lg font-bold text-blue-700 dark:text-blue-400 leading-tight">מערכת ייעוץ</h1>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">בית ספרי</p>
-      </div>
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-20 md:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navItems.map(({ to, label, icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
-              }`
-            }
-          >
-            {icon}
-            {label}
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
+      <aside className={`fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col z-30 transition-transform duration-200 ${
+        isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
+      }`}>
+        <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+          <h1 className="text-lg font-bold text-blue-700 dark:text-blue-400 leading-tight">מערכת ייעוץ</h1>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">בית ספרי</p>
+        </div>
+
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {navItems.map(({ to, label, icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              onClick={onClose}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
+                }`
+              }
+            >
+              {icon}
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
+    </>
   )
 }
