@@ -19,3 +19,6 @@ export const importStudentsExcel = (file) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   }).then(r => r.data)
 }
+
+export const exportStudentsExcel = () =>
+  axiosInstance.get('/students/export/', { responseType: 'blob' }).then(r => r.data)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getStudents } from '../api/students'
+import { getStudents, exportStudentsExcel } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
 import AddStudentModal from '../components/AddStudentModal'
 import ImportStudentsModal from '../components/ImportStudentsModal'
@@ -30,6 +30,7 @@ export default function StudentsPage() {
   const [classLevels, setClassLevels] = useState([])
   const [showAddModal, setShowAddModal]       = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
+  const [exporting, setExporting]             = useState(false)
   const [refreshKey, setRefreshKey]           = useState(0)
 
   // Fetch class levels once on mount for the dropdown
@@ -66,6 +67,23 @@ export default function StudentsPage() {
     setPage(1)
   }
 
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const blob = await exportStudentsExcel()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'תלמידים.xlsx'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      // silent — user will notice nothing downloaded
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 0
 
   return (
@@ -80,6 +98,13 @@ export default function StudentsPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="border border-gray-200 hover:border-green-300 hover:bg-green-50 text-gray-600 hover:text-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+          >
+            {exporting ? 'מייצא...' : 'ייצוא ל-Excel'}
+          </button>
           <button
             onClick={() => setShowImportModal(true)}
             className="border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-600 hover:text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
