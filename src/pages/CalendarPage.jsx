@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 import 'moment/locale/he'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { getCalendarEvents } from '../api/calendar'
 import EventDetailPanel from '../components/EventDetailPanel'
+import CreateFromSlotModal from '../components/CreateFromSlotModal'
 
 moment.locale('he')
 moment.updateLocale('he', { week: { dow: 0, doy: 6 } })
@@ -58,6 +59,13 @@ export default function CalendarPage() {
   const [view, setView]                   = useState(Views.WEEK)
   const [date, setDate]                   = useState(new Date())
   const [selectedEvent, setSelectedEvent] = useState(null)
+  const [slotInfo, setSlotInfo]           = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+
+  const currentRange = useRef({
+    start: moment().startOf('week').toDate(),
+    end:   moment().endOf('week').toDate(),
+  })
 
   const fetchEvents = useCallback((start, end) => {
     setLoading(true)
@@ -68,9 +76,7 @@ export default function CalendarPage() {
   }, [])
 
   useEffect(() => {
-    const start = moment().startOf('week').toDate()
-    const end   = moment().endOf('week').toDate()
-    fetchEvents(start, end)
+    fetchEvents(currentRange.current.start, currentRange.current.end)
   }, [fetchEvents])
 
   const handleRangeChange = useCallback((range) => {
@@ -82,6 +88,18 @@ export default function CalendarPage() {
       start = range.start
       end   = range.end
     }
+    currentRange.current = { start, end }
+    fetchEvents(start, end)
+  }, [fetchEvents])
+
+  const handleSelectSlot = useCallback((slot) => {
+    setSlotInfo({ start: slot.start, end: slot.end })
+    setShowCreateModal(true)
+  }, [])
+
+  const handleCreateSuccess = useCallback(() => {
+    setShowCreateModal(false)
+    const { start, end } = currentRange.current
     fetchEvents(start, end)
   }, [fetchEvents])
 
@@ -126,12 +144,14 @@ export default function CalendarPage() {
             onNavigate={setDate}
             onRangeChange={handleRangeChange}
             onSelectEvent={setSelectedEvent}
+            onSelectSlot={handleSelectSlot}
             eventPropGetter={eventPropGetter}
             messages={messages}
             rtl
             culture="he"
             views={[Views.WEEK, Views.DAY, Views.MONTH]}
             popup
+            selectable
           />
         </div>
       </div>
@@ -142,6 +162,14 @@ export default function CalendarPage() {
           onClose={() => setSelectedEvent(null)}
         />
       )}
+
+      <CreateFromSlotModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleCreateSuccess}
+        slotStart={slotInfo?.start}
+        slotEnd={slotInfo?.end}
+      />
     </div>
   )
 }
