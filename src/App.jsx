@@ -3,15 +3,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
-
-// Placeholder — will be replaced in Step 14
-function DashboardPage() {
-  return (
-    <div className="flex items-center justify-center h-64 text-gray-400 text-lg">
-      לוח בקרה — בקרוב
-    </div>
-  )
-}
+import DashboardPage from './pages/DashboardPage'
 
 export default function App() {
   return (
