@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getDashboard } from '../api/dashboard'
 import { getHebrewDateString, getTodayHoliday } from '../utils/hebrewDate'
 
@@ -29,7 +30,6 @@ function formatRelativeDate(dateStr) {
   return `לפני ${diffDays} ימים`
 }
 
-
 function StatCard({ label, value, colorClass, icon }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
@@ -50,6 +50,24 @@ function SkeletonCard({ className = '' }) {
       <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
       <div className="h-8 bg-gray-200 rounded w-1/2 mb-2" />
       <div className="h-3 bg-gray-100 rounded w-2/3" />
+    </div>
+  )
+}
+
+function AlertCard({ colorKey, icon, title, children }) {
+  const styles = {
+    blue:   { wrap: 'bg-blue-50 border-blue-200',   title: 'text-blue-800',  body: 'text-blue-700' },
+    orange: { wrap: 'bg-amber-50 border-amber-200', title: 'text-amber-800', body: 'text-amber-700' },
+    red:    { wrap: 'bg-red-50 border-red-200',     title: 'text-red-800',   body: 'text-red-700' },
+  }
+  const s = styles[colorKey]
+  return (
+    <div className={`border rounded-xl px-5 py-4 flex items-start gap-3 ${s.wrap}`}>
+      <span className="text-lg mt-0.5">{icon}</span>
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm font-semibold ${s.title}`}>{title}</p>
+        {children && <div className={`text-sm mt-1.5 ${s.body}`}>{children}</div>}
+      </div>
     </div>
   )
 }
@@ -93,9 +111,11 @@ export default function DashboardPage() {
   }
 
   const { today_sessions, tomorrow_sessions, recent_events, stats, alerts } = data
-  const atRisk = alerts?.students_without_contact
+  const { upcoming_today, missing_summaries, at_risk_students } = alerts ?? {}
   const hebrewDate = getHebrewDateString()
   const holiday    = getTodayHoliday()
+
+  const hasAlerts = upcoming_today?.length > 0 || missing_summaries?.length > 0 || at_risk_students?.count > 0
 
   return (
     <div>
@@ -116,22 +136,47 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Alert banner */}
-      {atRisk?.count > 0 && (
-        <div className="mb-5 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 flex items-start gap-3">
-          <span className="text-amber-500 text-lg mt-0.5">⚠️</span>
-          <div>
-            <p className="text-sm font-semibold text-amber-800">
-              {atRisk.count} תלמידים ללא מגע מעל 45 יום
-            </p>
-            <p className="text-sm text-amber-700 mt-0.5">
-              {atRisk.students
-                .slice(0, 3)
-                .map(s => s.full_name)
-                .join('، ')}
-              {atRisk.count > 3 && ` ועוד ${atRisk.count - 3}`}
-            </p>
-          </div>
+      {/* Smart Alerts */}
+      {hasAlerts && (
+        <div className="space-y-3 mb-5">
+          {upcoming_today?.length > 0 && (
+            <AlertCard colorKey="blue" icon="📅" title={`${upcoming_today.length} פגישות מתוכננות להיום`}>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                {upcoming_today.slice(0, 4).map(e => (
+                  <Link key={e.id} to={`/students/${e.student_id}`} className="hover:underline">
+                    {e.student_name} {formatTime(e.date)}
+                  </Link>
+                ))}
+                {upcoming_today.length > 4 && <span>ועוד {upcoming_today.length - 4}</span>}
+              </div>
+            </AlertCard>
+          )}
+
+          {missing_summaries?.length > 0 && (
+            <AlertCard colorKey="orange" icon="✏️" title={`${missing_summaries.length} פגישות עבר ללא סיכום`}>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                {missing_summaries.slice(0, 3).map(e => (
+                  <Link key={e.id} to={`/students/${e.student_id}`} className="hover:underline">
+                    {e.student_name}
+                  </Link>
+                ))}
+                {missing_summaries.length > 3 && <span>ועוד {missing_summaries.length - 3}</span>}
+              </div>
+            </AlertCard>
+          )}
+
+          {at_risk_students?.count > 0 && (
+            <AlertCard colorKey="red" icon="⚠️" title={`${at_risk_students.count} תלמידים ללא מגע מעל 90 יום`}>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                {at_risk_students.students.slice(0, 3).map(s => (
+                  <Link key={s.id} to={`/students/${s.id}`} className="hover:underline">
+                    {s.full_name}
+                  </Link>
+                ))}
+                {at_risk_students.count > 3 && <span>ועוד {at_risk_students.count - 3}</span>}
+              </div>
+            </AlertCard>
+          )}
         </div>
       )}
 
@@ -199,9 +244,12 @@ export default function DashboardPage() {
               {recent_events.map(event => (
                 <li key={event.id} className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-sm font-medium text-gray-700 truncate">
+                    <Link
+                      to={`/students/${event.student_id}`}
+                      className="text-sm font-medium text-gray-700 truncate hover:text-blue-600"
+                    >
                       {event.student_name}
-                    </span>
+                    </Link>
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
                         EVENT_TYPE_COLORS[event.event_type] ?? 'bg-gray-100 text-gray-600'
