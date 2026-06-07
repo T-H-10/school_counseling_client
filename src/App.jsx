@@ -4,6 +4,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import StudentsPage from './pages/StudentsPage'
+import StudentProfilePage from './pages/StudentProfilePage'
 
 export default function App() {
   return (
@@ -20,6 +22,8 @@ export default function App() {
             }
           >
             <Route index element={<DashboardPage />} />
+            <Route path="students" element={<StudentsPage />} />
+            <Route path="students/:id" element={<StudentProfilePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
