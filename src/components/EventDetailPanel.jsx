@@ -1,3 +1,5 @@
+import { getHebrewDateString } from '../utils/hebrewDate'
+
 function formatDatetime(date) {
   if (!date) return '—'
   const d = new Date(date)
@@ -46,17 +48,19 @@ export default function EventDetailPanel({ event, onClose }) {
                 {event.resource?.with ?? '—'}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400 w-16 shrink-0">התחלה:</span>
-              <span className="font-mono text-gray-700 text-xs">
-                {formatDatetime(event.start)}
-              </span>
+            <div className="flex items-start gap-2">
+              <span className="text-gray-400 w-16 shrink-0 pt-0.5">התחלה:</span>
+              <div className="leading-tight">
+                <div className="font-mono text-gray-700 text-xs">{formatDatetime(event.start)}</div>
+                {event.start && <div className="text-xs text-indigo-400 opacity-80">{getHebrewDateString(new Date(event.start), true)}</div>}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400 w-16 shrink-0">סיום:</span>
-              <span className="font-mono text-gray-700 text-xs">
-                {formatDatetime(event.end)}
-              </span>
+            <div className="flex items-start gap-2">
+              <span className="text-gray-400 w-16 shrink-0 pt-0.5">סיום:</span>
+              <div className="leading-tight">
+                <div className="font-mono text-gray-700 text-xs">{formatDatetime(event.end)}</div>
+                {event.end && <div className="text-xs text-indigo-400 opacity-80">{getHebrewDateString(new Date(event.end), true)}</div>}
+              </div>
             </div>
           </div>
         </div>

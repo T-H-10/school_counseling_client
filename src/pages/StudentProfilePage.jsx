@@ -5,6 +5,7 @@ import { archiveStudent } from '../api/students'
 import AddEventModal from '../components/AddEventModal'
 import EditEventModal from '../components/EditEventModal'
 import EditStudentModal from '../components/EditStudentModal'
+import { getHebrewDateString } from '../utils/hebrewDate'
 
 const EVENT_TYPE_MAP = {
   meeting:        { label: 'פגישה',       classes: 'bg-indigo-100 text-indigo-700' },
@@ -258,7 +259,12 @@ export default function StudentProfilePage() {
                     <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
                       <div className="flex items-center gap-2 flex-wrap">
                         <EventTypeBadge type={item.event_type} />
-                        <span className="text-xs text-gray-400 font-mono">{item.display_date}</span>
+                        <div className="text-xs text-gray-400 font-mono leading-tight">
+                          <div>{item.display_date}</div>
+                          {item.date && (
+                            <div className="text-indigo-400 opacity-80">{getHebrewDateString(new Date(item.date), true)}</div>
+                          )}
+                        </div>
                       </div>
                       <button
                         onClick={() => setEditingEvent(item)}

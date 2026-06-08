@@ -4,6 +4,7 @@ import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
 import AddSessionModal from '../components/AddSessionModal'
 import EditSessionModal from '../components/EditSessionModal'
+import { getHebrewDateString } from '../utils/hebrewDate'
 
 function formatDatetime(isoString) {
   if (!isoString) return '—'
@@ -157,8 +158,9 @@ export default function SessionsPage() {
                   </div>
 
                   {/* Date */}
-                  <div className="w-28 text-center">
-                    <span className="text-xs text-gray-500 font-mono">{formatDatetime(session.date)}</span>
+                  <div className="w-28 text-center leading-tight">
+                    <div className="text-xs text-gray-500 font-mono">{formatDatetime(session.date)}</div>
+                    <div className="text-xs text-indigo-400 opacity-80">{getHebrewDateString(new Date(session.date), false)}</div>
                   </div>
 
                   {/* School year */}

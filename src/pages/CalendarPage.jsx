@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { getCalendarEvents } from '../api/calendar'
 import EventDetailPanel from '../components/EventDetailPanel'
 import CreateFromSlotModal from '../components/CreateFromSlotModal'
+import { getHebrewDateString } from '../utils/hebrewDate'
 
 moment.locale('he')
 moment.updateLocale('he', { week: { dow: 0, doy: 6 } })
@@ -51,6 +52,28 @@ function eventPropGetter(event) {
       padding: '2px 4px',
     },
   }
+}
+
+function HebrewMonthDateHeader({ date, label, onDrillDown }) {
+  return (
+    <div onClick={onDrillDown} className="text-right cursor-pointer">
+      <span>{label}</span>
+      <div className="text-xs text-indigo-400 opacity-80 leading-none mt-0.5">
+        {getHebrewDateString(date, false)}
+      </div>
+    </div>
+  )
+}
+
+function HebrewWeekHeader({ date, label }) {
+  return (
+    <div className="text-center">
+      <div>{label}</div>
+      <div className="text-xs text-indigo-400 opacity-80 leading-none">
+        {getHebrewDateString(date, false)}
+      </div>
+    </div>
+  )
 }
 
 export default function CalendarPage() {
@@ -152,6 +175,11 @@ export default function CalendarPage() {
             views={[Views.WEEK, Views.DAY, Views.MONTH]}
             popup
             selectable
+            components={{
+              month: { dateHeader: HebrewMonthDateHeader },
+              week:  { header: HebrewWeekHeader },
+              day:   { header: HebrewWeekHeader },
+            }}
           />
         </div>
       </div>
