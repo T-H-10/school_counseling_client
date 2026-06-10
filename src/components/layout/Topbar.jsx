@@ -1,7 +1,7 @@
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 
-export default function Topbar({ onToggleSidebar }) {
+export default function Topbar({ onToggleSidebar, onOpenQuick }) {
   const { user, logout } = useAuth()
   const { isDark, toggle } = useTheme()
 
@@ -31,6 +31,15 @@ export default function Topbar({ onToggleSidebar }) {
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Quick action */}
+        <button
+          onClick={onOpenQuick}
+          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
+        >
+          <span className="text-base leading-none">+</span>
+          <span className="hidden sm:inline">פעולה מהירה</span>
+        </button>
+
         {/* Dark mode toggle */}
         <button
           onClick={toggle}
@@ -52,7 +61,7 @@ export default function Topbar({ onToggleSidebar }) {
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="text-right">
+          <div className="text-end">
             <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
               שלום, {user?.username}
             </p>

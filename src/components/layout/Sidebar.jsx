@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
   {
@@ -44,6 +45,9 @@ const navItems = [
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
+  const { user } = useAuth()
+  const username = user?.username ?? ''
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -82,6 +86,20 @@ export default function Sidebar({ isOpen, onClose }) {
             </NavLink>
           ))}
         </nav>
+
+        {username && (
+          <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700 shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 text-sm font-bold shrink-0">
+                {username[0].toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{username}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">יועץ/ת</p>
+              </div>
+            </div>
+          </div>
+        )}
       </aside>
     </>
   )
