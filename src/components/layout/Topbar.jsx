@@ -1,14 +1,71 @@
-import { useAuth } from '../../context/AuthContext'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
 
 export default function Topbar({ onToggleSidebar, onOpenQuick }) {
-  const { user, logout } = useAuth()
   const { isDark, toggle } = useTheme()
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  function handleSearchSubmit(e) {
+    e.preventDefault()
+    navigate('/students')
+  }
 
   return (
-    <header className="fixed top-0 right-0 md:right-64 left-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-6 z-10">
-      <div className="flex items-center gap-2">
-        {/* Hamburger — mobile only */}
+    <header className="fixed top-0 right-0 md:right-64 left-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3 px-4 md:px-6 z-10">
+
+      {/* Dark mode toggle — rightmost in topbar (first in RTL DOM) */}
+      <button
+        onClick={toggle}
+        aria-label={isDark ? 'עבור למצב בהיר' : 'עבור למצב כהה'}
+        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0"
+      >
+        {isDark ? (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <path strokeLinecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+        ) : (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+        )}
+      </button>
+
+      {/* Search bar — flex-1, fills the center */}
+      <form onSubmit={handleSearchSubmit} className="flex-1">
+        <div className="relative">
+          <button
+            type="submit"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400"
+            aria-label="חיפוש"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35" />
+            </svg>
+          </button>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="חיפוש תלמיד, כיתה, מסמך..."
+            className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pr-9 pl-4 py-2 text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 dark:focus:border-blue-500 transition-colors"
+          />
+        </div>
+      </form>
+
+      {/* Left group — quick action + mobile hamburger (last in RTL DOM = leftmost) */}
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          onClick={onOpenQuick}
+          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
+        >
+          <span className="text-base leading-none">+</span>
+          <span className="hidden sm:inline">פעולה מהירה</span>
+        </button>
+
         <button
           onClick={onToggleSidebar}
           className="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -18,59 +75,6 @@ export default function Topbar({ onToggleSidebar, onOpenQuick }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-
-        <button
-          onClick={logout}
-          className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
-          </svg>
-          <span className="hidden sm:inline">יציאה</span>
-        </button>
-      </div>
-
-      <div className="flex items-center gap-4">
-        {/* Quick action */}
-        <button
-          onClick={onOpenQuick}
-          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
-        >
-          <span className="text-base leading-none">+</span>
-          <span className="hidden sm:inline">פעולה מהירה</span>
-        </button>
-
-        {/* Dark mode toggle */}
-        <button
-          onClick={toggle}
-          aria-label={isDark ? 'עבור למצב בהיר' : 'עבור למצב כהה'}
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          {isDark ? (
-            /* Sun icon */
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="5" />
-              <path strokeLinecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-            </svg>
-          ) : (
-            /* Moon icon */
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-            </svg>
-          )}
-        </button>
-
-        <div className="flex items-center gap-3">
-          <div className="text-end">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              שלום, {user?.username}
-            </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">יועץ בית ספרי</p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-sm">
-            {user?.username?.[0]?.toUpperCase()}
-          </div>
-        </div>
       </div>
     </header>
   )
