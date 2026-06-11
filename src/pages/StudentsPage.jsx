@@ -5,6 +5,7 @@ import { getClassLevels } from '../api/classLevels'
 import AddStudentModal from '../components/AddStudentModal'
 import EditStudentModal from '../components/EditStudentModal'
 import ImportStudentsModal from '../components/ImportStudentsModal'
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal'
 import StudentsToolbar from '../components/students/StudentsToolbar'
 import StudentsFilterBar from '../components/students/StudentsFilterBar'
 import StudentsTable from '../components/students/StudentsTable'
@@ -27,6 +28,8 @@ export default function StudentsPage() {
   const [refreshKey, setRefreshKey]           = useState(0)
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [showEditModal, setShowEditModal]     = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState(null)
+  const [deleting, setDeleting]               = useState(false)
   const currentPage = useRef(1)
 
   useEffect(() => {
@@ -113,14 +116,19 @@ export default function StudentsPage() {
     setShowEditModal(true)
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('האם למחוק את התלמיד/ה מהמערכת?')) return
+  const handleDelete = (id) => setPendingDeleteId(id)
+
+  const handleConfirmDelete = async () => {
+    setDeleting(true)
     try {
-      await archiveStudent(id)
-      toast.success('התלמיד/ה הועבר/ה לארכיון')
+      await archiveStudent(pendingDeleteId)
+      toast.success('התלמיד/ה נמחק/ה מהמערכת')
+      setPendingDeleteId(null)
       setRefreshKey(k => k + 1)
     } catch {
       toast.error('שגיאה במחיקת התלמיד/ה')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -172,6 +180,12 @@ export default function StudentsPage() {
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
         onSuccess={() => setRefreshKey(k => k + 1)}
+      />
+      <ConfirmDeleteModal
+        isOpen={!!pendingDeleteId}
+        confirming={deleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setPendingDeleteId(null)}
       />
     </>
   )
