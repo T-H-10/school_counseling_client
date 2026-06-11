@@ -1,4 +1,4 @@
-export default function StudentsFilterBar({ search, onSearchChange, classLevel, onClassLevelChange, classLevels }) {
+export default function StudentsFilterBar({ search, onSearchChange, classLevel, onClassLevelChange, classLevels, classNumber, onClassNumberChange }) {
   return (
     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-4 mb-4 flex items-center gap-3 flex-wrap">
       <div className="relative flex-1 min-w-52">
@@ -24,6 +24,16 @@ export default function StudentsFilterBar({ search, onSearchChange, classLevel, 
         <option value="">כל השכבות</option>
         {classLevels.map(cl => (
           <option key={cl.id} value={cl.id}>שכבה {cl.name}</option>
+        ))}
+      </select>
+      <select
+        value={classNumber}
+        onChange={e => onClassNumberChange(e.target.value)}
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-colors"
+      >
+        <option value="">כל הכיתות</option>
+        {[...Array(9)].map((_, i) => (
+          <option key={i + 1} value={i + 1}>כיתה {i + 1}</option>
         ))}
       </select>
     </div>
