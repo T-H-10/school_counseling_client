@@ -1,34 +1,12 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { createStudentEvent } from '../api/studentProfile'
-
-const EVENT_TYPE_OPTIONS = [
-  { value: 'meeting',        label: 'פגישה' },
-  { value: 'call',           label: 'שיחה' },
-  { value: 'teacher_report', label: 'דיווח מורה' },
-  { value: 'other',          label: 'אחר' },
-]
-
-function nowLocalDatetime() {
-  const d = new Date()
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
+import { EVENT_TYPE_OPTIONS } from '../constants/eventTypes'
+import { parseApiError } from '../utils/apiError'
+import { toDatetimeLocal } from '../utils/datetime'
+import { inputClass } from '../utils/formClasses'
 
 const INITIAL_FORM = { event_type: 'meeting', date: '', title: '', agenda: '', description: '' }
-
-function parseApiError(err) {
-  const data = err?.response?.data
-  if (!data) return 'שגיאה בשמירה, אנא נסה שוב'
-  if (typeof data === 'string') return data
-  const first = Object.values(data)[0]
-  if (Array.isArray(first)) return first[0]
-  if (typeof first === 'string') return first
-  return 'שגיאה בשמירה, אנא נסה שוב'
-}
-
-const inputClass =
-  'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
 
 export default function AddEventModal({ studentId, isOpen, onClose, onSuccess }) {
   const [form, setForm]     = useState(INITIAL_FORM)
@@ -36,7 +14,7 @@ export default function AddEventModal({ studentId, isOpen, onClose, onSuccess })
 
   useEffect(() => {
     if (isOpen) {
-      setForm({ ...INITIAL_FORM, date: nowLocalDatetime() })
+      setForm({ ...INITIAL_FORM, date: toDatetimeLocal(new Date()) })
     }
   }, [isOpen])
 

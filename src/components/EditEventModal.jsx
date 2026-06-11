@@ -1,33 +1,10 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { updateStudentEvent } from '../api/studentProfile'
-
-const EVENT_TYPE_OPTIONS = [
-  { value: 'meeting',        label: 'פגישה' },
-  { value: 'call',           label: 'שיחה' },
-  { value: 'teacher_report', label: 'דיווח מורה' },
-  { value: 'other',          label: 'אחר' },
-]
-
-function toLocalDatetime(isoString) {
-  if (!isoString) return ''
-  const d = new Date(isoString)
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
-function parseApiError(err) {
-  const data = err?.response?.data
-  if (!data) return 'שגיאה בשמירה, אנא נסה שוב'
-  if (typeof data === 'string') return data
-  const first = Object.values(data)[0]
-  if (Array.isArray(first)) return first[0]
-  if (typeof first === 'string') return first
-  return 'שגיאה בשמירה, אנא נסה שוב'
-}
-
-const inputClass =
-  'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
+import { EVENT_TYPE_OPTIONS } from '../constants/eventTypes'
+import { parseApiError } from '../utils/apiError'
+import { toDatetimeLocal } from '../utils/datetime'
+import { inputClass } from '../utils/formClasses'
 
 export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
   const [form, setForm]     = useState(null)
@@ -37,7 +14,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
     if (isOpen && event) {
       setForm({
         event_type:  event.event_type,
-        date:        toLocalDatetime(event.date),
+        date:        toDatetimeLocal(event.date),
         title:       event.title,
         agenda:      event.agenda ?? '',
         description: event.description ?? '',

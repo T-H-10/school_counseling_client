@@ -3,12 +3,9 @@ import toast from 'react-hot-toast'
 import { createClassSession } from '../api/classSessions'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
-
-function nowLocalDatetime() {
-  const d = new Date()
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
+import { parseApiError } from '../utils/apiError'
+import { toDatetimeLocal } from '../utils/datetime'
+import { inputClass } from '../utils/formClasses'
 
 const INITIAL_FORM = {
   title: '',
@@ -18,19 +15,6 @@ const INITIAL_FORM = {
   end_date: '',
   summary: '',
 }
-
-function parseApiError(err) {
-  const data = err?.response?.data
-  if (!data) return 'שגיאה בשמירה, אנא נסה שוב'
-  if (typeof data === 'string') return data
-  const first = Object.values(data)[0]
-  if (Array.isArray(first)) return first[0]
-  if (typeof first === 'string') return first
-  return 'שגיאה בשמירה, אנא נסה שוב'
-}
-
-const inputClass =
-  'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
 
 export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
   const [form, setForm]             = useState(INITIAL_FORM)
@@ -50,7 +34,7 @@ export default function AddSessionModal({ isOpen, onClose, onSuccess }) {
 
   useEffect(() => {
     if (isOpen) {
-      setForm({ ...INITIAL_FORM, date: nowLocalDatetime() })
+      setForm({ ...INITIAL_FORM, date: toDatetimeLocal(new Date()) })
     }
   }, [isOpen])
 

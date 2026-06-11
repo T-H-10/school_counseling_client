@@ -3,26 +3,9 @@ import toast from 'react-hot-toast'
 import { updateClassSession } from '../api/classSessions'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
-
-function toLocalDatetime(isoString) {
-  if (!isoString) return ''
-  const d = new Date(isoString)
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
-function parseApiError(err) {
-  const data = err?.response?.data
-  if (!data) return 'שגיאה בשמירה, אנא נסה שוב'
-  if (typeof data === 'string') return data
-  const first = Object.values(data)[0]
-  if (Array.isArray(first)) return first[0]
-  if (typeof first === 'string') return first
-  return 'שגיאה בשמירה, אנא נסה שוב'
-}
-
-const inputClass =
-  'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
+import { parseApiError } from '../utils/apiError'
+import { toDatetimeLocal } from '../utils/datetime'
+import { inputClass } from '../utils/formClasses'
 
 export default function EditSessionModal({ session, isOpen, onClose, onSuccess }) {
   const [form, setForm]               = useState(null)
@@ -46,8 +29,8 @@ export default function EditSessionModal({ session, isOpen, onClose, onSuccess }
         title:       session.title,
         school_year: session.school_year,
         class_level: session.class_level,
-        date:        toLocalDatetime(session.date),
-        end_date:    toLocalDatetime(session.end_date),
+        date:        toDatetimeLocal(session.date),
+        end_date:    toDatetimeLocal(session.end_date),
         summary:     session.summary ?? '',
       })
     }

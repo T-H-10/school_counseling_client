@@ -1,58 +1,14 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import AsyncSelect from 'react-select/async'
 import { createStudentEvent } from '../api/studentProfile'
 import { createClassSession } from '../api/classSessions'
-import { getStudents } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
-
-const EVENT_TYPE_OPTIONS = [
-  { value: 'meeting',        label: 'פגישה' },
-  { value: 'call',           label: 'שיחה' },
-  { value: 'teacher_report', label: 'דיווח מורה' },
-  { value: 'other',          label: 'אחר' },
-]
-
-function toDatetimeLocal(date) {
-  const d = new Date(date)
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
-function parseApiError(err) {
-  const data = err?.response?.data
-  if (!data) return 'שגיאה בשמירה, אנא נסה שוב'
-  if (typeof data === 'string') return data
-  const first = Object.values(data)[0]
-  if (Array.isArray(first)) return first[0]
-  if (typeof first === 'string') return first
-  return 'שגיאה בשמירה, אנא נסה שוב'
-}
-
-const inputClass =
-  'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white'
-
-const selectStyles = {
-  control: (base, state) => ({
-    ...base,
-    borderColor: state.isFocused ? '#a5b4fc' : '#e5e7eb',
-    borderRadius: '0.5rem',
-    boxShadow: state.isFocused ? '0 0 0 2px #c7d2fe' : 'none',
-    fontSize: '0.875rem',
-    minHeight: '38px',
-    '&:hover': { borderColor: '#a5b4fc' },
-  }),
-  placeholder: (base) => ({ ...base, color: '#9ca3af', fontSize: '0.875rem' }),
-  option: (base, state) => ({
-    ...base,
-    backgroundColor: state.isFocused ? '#eef2ff' : 'white',
-    color: '#374151',
-    fontSize: '0.875rem',
-  }),
-  menu: (base) => ({ ...base, zIndex: 9999 }),
-  singleValue: (base) => ({ ...base, fontSize: '0.875rem' }),
-}
+import { parseApiError } from '../utils/apiError'
+import { toDatetimeLocal } from '../utils/datetime'
+import { inputClass } from '../utils/formClasses'
+import EventFields from './createFromSlot/EventFields'
+import SessionFields from './createFromSlot/SessionFields'
 
 export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotStart, slotEnd }) {
   const [mode, setMode]           = useState('event')
@@ -91,19 +47,6 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
   }, [isOpen, slotStart, slotEnd])
 
   if (!isOpen) return null
-
-  const loadStudentOptions = async (inputValue) => {
-    if (!inputValue || inputValue.length < 2) return []
-    try {
-      const data = await getStudents({ search: inputValue, page: 1 })
-      return (data.results ?? []).map(s => ({
-        value: s.id,
-        label: `${s.full_name} | ${s.id_number}`,
-      }))
-    } catch {
-      return []
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -211,84 +154,25 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
 
           {/* Student picker — event mode only */}
           {mode === 'event' && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  תלמיד <span className="text-red-400">*</span>
-                </label>
-                <AsyncSelect
-                  value={student}
-                  onChange={setStudent}
-                  loadOptions={loadStudentOptions}
-                  placeholder="הקלד שם או ת.ז. לחיפוש..."
-                  noOptionsMessage={({ inputValue }) =>
-                    !inputValue || inputValue.length < 2
-                      ? 'הקלד לפחות 2 תווים'
-                      : 'לא נמצאו תלמידים'
-                  }
-                  loadingMessage={() => 'מחפש...'}
-                  styles={selectStyles}
-                  isRtl
-                  isClearable
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  סוג אירוע <span className="text-red-400">*</span>
-                </label>
-                <select
-                  value={eventType}
-                  onChange={e => setEventType(e.target.value)}
-                  className={inputClass}
-                  required
-                >
-                  {EVENT_TYPE_OPTIONS.map(o => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-              </div>
-            </>
+            <EventFields
+              student={student}
+              setStudent={setStudent}
+              eventType={eventType}
+              setEventType={setEventType}
+            />
           )}
 
           {/* School year + class level — session mode only */}
           {mode === 'session' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  שנת לימודים <span className="text-red-400">*</span>
-                </label>
-                <select
-                  value={schoolYear}
-                  onChange={e => setSchoolYear(e.target.value)}
-                  className={inputClass}
-                  required
-                >
-                  <option value="">בחר שנה</option>
-                  {activeYears.map(y => (
-                    <option key={y.id} value={y.id}>{y.name} (פעיל)</option>
-                  ))}
-                  {otherYears.map(y => (
-                    <option key={y.id} value={y.id}>{y.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  כיתה <span className="text-red-400">*</span>
-                </label>
-                <select
-                  value={classLevel}
-                  onChange={e => setClassLevel(e.target.value)}
-                  className={inputClass}
-                  required
-                >
-                  <option value="">בחר כיתה</option>
-                  {classLevels.map(cl => (
-                    <option key={cl.id} value={cl.id}>{cl.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <SessionFields
+              schoolYear={schoolYear}
+              setSchoolYear={setSchoolYear}
+              classLevel={classLevel}
+              setClassLevel={setClassLevel}
+              activeYears={activeYears}
+              otherYears={otherYears}
+              classLevels={classLevels}
+            />
           )}
 
           {/* Start + End datetime */}

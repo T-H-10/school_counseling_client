@@ -1,42 +1,9 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { updateStudent } from '../api/students'
-
-function parseApiErrors(err) {
-  const data = err?.response?.data
-  if (!data) return { fields: {}, general: 'שגיאה בשמירה, אנא נסה שוב' }
-  if (typeof data === 'string') return { fields: {}, general: data }
-  if (typeof data === 'object') {
-    const fields = {}
-    let general = null
-    for (const [key, val] of Object.entries(data)) {
-      const msg = Array.isArray(val) ? val[0] : val
-      const str = typeof msg === 'string' ? msg : JSON.stringify(msg)
-      if (key === 'non_field_errors' || key === 'detail') {
-        general = str
-      } else {
-        fields[key] = str
-      }
-    }
-    return { fields, general: general ?? (Object.keys(fields).length === 0 ? 'שגיאה בשמירה, אנא נסה שוב' : null) }
-  }
-  return { fields: {}, general: 'שגיאה בשמירה, אנא נסה שוב' }
-}
-
-const sectionLabel = 'text-xs font-semibold text-gray-400 uppercase tracking-wide pt-1'
-
-function fieldClass(err) {
-  return `w-full border rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 bg-white ${
-    err
-      ? 'border-red-400 focus:ring-red-200 text-gray-700'
-      : 'border-gray-200 focus:ring-indigo-300 text-gray-700'
-  }`
-}
-
-function FieldError({ msg }) {
-  if (!msg) return null
-  return <p className="text-xs text-red-500 mt-1">{msg}</p>
-}
+import { parseApiErrors } from '../utils/apiError'
+import PersonalFields from './student/PersonalFields'
+import ParentFields from './student/ParentFields'
 
 export default function EditStudentModal({ isOpen, onClose, onSuccess, student }) {
   const [form, setForm]               = useState({})
@@ -111,117 +78,9 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
 
-          {/* ── Personal details ── */}
-          <p className={sectionLabel}>פרטי תלמיד</p>
+          <PersonalFields form={form} fieldErrors={fieldErrors} onChange={handleChange} />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              שם מלא <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              name="full_name"
-              value={form.full_name}
-              onChange={handleChange}
-              placeholder="שם פרטי ושם משפחה"
-              className={fieldClass(fieldErrors.full_name)}
-              maxLength={150}
-              required
-            />
-            <FieldError msg={fieldErrors.full_name} />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              תעודת זהות <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              name="id_number"
-              value={form.id_number}
-              onChange={handleChange}
-              placeholder="8–9 ספרות"
-              className={`${fieldClass(fieldErrors.id_number)} font-mono`}
-              maxLength={9}
-              required
-            />
-            <FieldError msg={fieldErrors.id_number} />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">כתובת</label>
-            <input
-              type="text"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-              placeholder="כתובת מגורים"
-              className={fieldClass(fieldErrors.address)}
-              maxLength={255}
-            />
-            <FieldError msg={fieldErrors.address} />
-          </div>
-
-          {/* ── Parent details ── */}
-          <p className={sectionLabel}>פרטי הורים</p>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">שם אם</label>
-              <input
-                type="text"
-                name="mother_name"
-                value={form.mother_name}
-                onChange={handleChange}
-                placeholder="שם האם"
-                className={fieldClass(fieldErrors.mother_name)}
-                maxLength={100}
-              />
-              <FieldError msg={fieldErrors.mother_name} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">טלפון אם</label>
-              <input
-                type="tel"
-                name="mother_phone"
-                value={form.mother_phone}
-                onChange={handleChange}
-                placeholder="05X-XXXXXXX"
-                className={`${fieldClass(fieldErrors.mother_phone)} font-mono`}
-                maxLength={20}
-              />
-              <FieldError msg={fieldErrors.mother_phone} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">שם אב</label>
-              <input
-                type="text"
-                name="father_name"
-                value={form.father_name}
-                onChange={handleChange}
-                placeholder="שם האב"
-                className={fieldClass(fieldErrors.father_name)}
-                maxLength={100}
-              />
-              <FieldError msg={fieldErrors.father_name} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">טלפון אב</label>
-              <input
-                type="tel"
-                name="father_phone"
-                value={form.father_phone}
-                onChange={handleChange}
-                placeholder="05X-XXXXXXX"
-                className={`${fieldClass(fieldErrors.father_phone)} font-mono`}
-                maxLength={20}
-              />
-              <FieldError msg={fieldErrors.father_phone} />
-            </div>
-          </div>
+          <ParentFields form={form} fieldErrors={fieldErrors} onChange={handleChange} />
 
           <div className="flex items-center gap-3 pt-1">
             <button
