@@ -23,7 +23,16 @@ const selectStyles = {
   singleValue: (base) => ({ ...base, fontSize: '0.875rem' }),
 }
 
+// RTL grid-cols-2: DOM[0]→right, DOM[1]→left. Pairs reversed so פגישה lands left and תלמידה right — matching the design.
 const CARDS = [
+  {
+    id: 'student',
+    label: 'תלמידה',
+    icon: '🧒',
+    iconBg: 'bg-blue-100',
+    cardBg: 'bg-white dark:bg-gray-800',
+    border: 'border border-gray-200 dark:border-gray-700',
+  },
   {
     id: 'meeting',
     label: 'פגישה',
@@ -33,10 +42,10 @@ const CARDS = [
     border: 'border-2 border-green-400 dark:border-green-600',
   },
   {
-    id: 'student',
-    label: 'תלמידה',
-    icon: '🧒',
-    iconBg: 'bg-blue-100',
+    id: 'session',
+    label: 'שיעור',
+    icon: '📚',
+    iconBg: 'bg-purple-100',
     cardBg: 'bg-white dark:bg-gray-800',
     border: 'border border-gray-200 dark:border-gray-700',
   },
@@ -48,14 +57,6 @@ const CARDS = [
     cardBg: 'bg-white dark:bg-gray-800',
     border: 'border border-gray-200 dark:border-gray-700',
     disabled: true,
-  },
-  {
-    id: 'session',
-    label: 'שיעור',
-    icon: '📚',
-    iconBg: 'bg-purple-100',
-    cardBg: 'bg-white dark:bg-gray-800',
-    border: 'border border-gray-200 dark:border-gray-700',
   },
 ]
 
