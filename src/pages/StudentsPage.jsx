@@ -4,18 +4,11 @@ import { getStudents, exportStudentsExcel } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
 import AddStudentModal from '../components/AddStudentModal'
 import ImportStudentsModal from '../components/ImportStudentsModal'
+import StudentsToolbar from '../components/students/StudentsToolbar'
+import StudentsFilterBar from '../components/students/StudentsFilterBar'
+import StudentsTable from '../components/students/StudentsTable'
 
 const PAGE_SIZE = 20
-
-function SkeletonRow() {
-  return (
-    <tr className="animate-pulse">
-      <td className="px-4 py-3"><div className="h-4 bg-gray-200 rounded w-36" /></td>
-      <td className="px-4 py-3"><div className="h-4 bg-gray-200 rounded w-24" /></td>
-      <td className="px-4 py-3"><div className="h-5 bg-gray-100 rounded-full w-12" /></td>
-    </tr>
-  )
-}
 
 export default function StudentsPage() {
   const navigate = useNavigate()
@@ -89,135 +82,32 @@ export default function StudentsPage() {
   return (
     <>
     <div>
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">תלמידים</h1>
-          {data && (
-            <p className="text-sm text-gray-400 mt-1">{data.count} תלמידים סה״כ</p>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="border border-gray-200 hover:border-green-300 hover:bg-green-50 text-gray-600 hover:text-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
-          >
-            {exporting ? 'מייצא...' : 'ייצוא ל-Excel'}
-          </button>
-          <button
-            onClick={() => setShowImportModal(true)}
-            className="border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-600 hover:text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
-          >
-            ייבוא מ-Excel
-          </button>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
-          >
-            + הוסף תלמיד
-          </button>
-        </div>
-      </div>
+      <StudentsToolbar
+        studentCount={data?.count}
+        exporting={exporting}
+        onExport={handleExport}
+        onImport={() => setShowImportModal(true)}
+        onAdd={() => setShowAddModal(true)}
+      />
 
-      {/* Filter bar */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex items-center gap-3 flex-wrap">
-        <div className="relative flex-1 min-w-52">
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-            🔍
-          </span>
-          <input
-            type="text"
-            placeholder="חיפוש לפי שם / ת.ז."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg py-2 pr-9 pl-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
-        </div>
-        <select
-          value={classLevel}
-          onChange={e => handleClassLevelChange(e.target.value)}
-          className="border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
-        >
-          <option value="">כל הכיתות</option>
-          {classLevels.map(cl => (
-            <option key={cl.id} value={cl.id}>כיתה {cl.name}</option>
-          ))}
-        </select>
-      </div>
+      <StudentsFilterBar
+        search={search}
+        onSearchChange={setSearch}
+        classLevel={classLevel}
+        onClassLevelChange={handleClassLevelChange}
+        classLevels={classLevels}
+      />
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="text-right px-4 py-3 font-semibold text-gray-600">שם מלא</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-600">ת.ז.</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-600">כיתה</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              [...Array(5)].map((_, i) => <SkeletonRow key={i} />)
-            ) : error ? (
-              <tr>
-                <td colSpan={3} className="text-center py-12 text-red-500">
-                  שגיאה בטעינת התלמידים. אנא רענן את הדף.
-                </td>
-              </tr>
-            ) : data?.results.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="text-center py-12 text-gray-400">
-                  לא נמצאו תלמידים
-                </td>
-              </tr>
-            ) : (
-              data?.results.map(student => (
-                <tr
-                  key={student.id}
-                  onClick={() => navigate(`/students/${student.id}`)}
-                  className="border-b border-gray-50 last:border-0 hover:bg-indigo-50 cursor-pointer transition-colors"
-                >
-                  <td className="px-4 py-3 font-medium text-gray-800">{student.full_name}</td>
-                  <td className="px-4 py-3 text-gray-500 font-mono tracking-wide">{student.id_number}</td>
-                  <td className="px-4 py-3">
-                    {student.current_class_level ? (
-                      <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-medium">
-                        כיתה {student.current_class_level}
-                      </span>
-                    ) : (
-                      <span className="text-gray-300">—</span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        {!loading && !error && data && totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-            <button
-              onClick={() => setPage(p => p - 1)}
-              disabled={!data.previous}
-              className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-            >
-              הקודם
-            </button>
-            <span className="text-sm text-gray-500">
-              עמוד {page} מתוך {totalPages}
-            </span>
-            <button
-              onClick={() => setPage(p => p + 1)}
-              disabled={!data.next}
-              className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-            >
-              הבא
-            </button>
-          </div>
-        )}
-      </div>
+      <StudentsTable
+        loading={loading}
+        error={error}
+        data={data}
+        onRowClick={(sid) => navigate(`/students/${sid}`)}
+        page={page}
+        totalPages={totalPages}
+        onPrev={() => setPage(p => p - 1)}
+        onNext={() => setPage(p => p + 1)}
+      />
     </div>
 
     <AddStudentModal
