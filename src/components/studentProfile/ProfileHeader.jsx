@@ -22,11 +22,15 @@ export default function ProfileHeader({
             <h1 className="text-2xl font-bold text-gray-800">{student.full_name}</h1>
             {student.current_class_level && (
               <span className="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
-                כיתה {student.current_class_level}
+                כיתה {student.current_class_level}׳ {student.current_class_number}
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500 font-mono mb-4">ת.ז. {student.id_number}</p>
+          <p className="text-sm text-gray-500 font-mono mb-1">ת.ז. {student.id_number}</p>
+          {student.current_teacher && (
+            <p className="text-sm text-gray-400 mb-4">מחנכ/ת: {student.current_teacher}</p>
+          )}
+          {!student.current_teacher && <div className="mb-4" />}
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={onAddEvent}

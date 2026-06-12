@@ -10,6 +10,7 @@ import StudentsPage from './pages/StudentsPage'
 import StudentProfilePage from './pages/StudentProfilePage'
 import SessionsPage from './pages/SessionsPage'
 import CalendarPage from './pages/CalendarPage'
+import ClassesPage from './pages/ClassesPage'
 
 function ThemedToaster() {
   const { isDark } = useTheme()
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="students/:id" element={<StudentProfilePage />} />
             <Route path="sessions" element={<SessionsPage />} />
             <Route path="calendar" element={<CalendarPage />} />
+            <Route path="classes" element={<ClassesPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

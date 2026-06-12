@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { getStudents, exportStudentsExcel, archiveStudent } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
@@ -11,6 +12,7 @@ import StudentsFilterBar from '../components/students/StudentsFilterBar'
 import StudentsTable from '../components/students/StudentsTable'
 
 export default function StudentsPage() {
+  const [searchParams] = useSearchParams()
   const [students, setStudents]       = useState([])
   const [totalCount, setTotalCount]   = useState(0)
   const [loading, setLoading]         = useState(true)
@@ -19,8 +21,8 @@ export default function StudentsPage() {
   const [hasMore, setHasMore]         = useState(false)
   const [search, setSearch]           = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [classLevel, setClassLevel]   = useState('')
-  const [classNumber, setClassNumber] = useState('')
+  const [classLevel, setClassLevel]   = useState(() => searchParams.get('class_level') || '')
+  const [classNumber, setClassNumber] = useState(() => searchParams.get('class_number') || '')
   const [classLevels, setClassLevels] = useState([])
   const [showAddModal, setShowAddModal]       = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
