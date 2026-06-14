@@ -49,8 +49,9 @@ export default function DashboardPage() {
     )
   }
 
-  const { recent_events, stats, alerts } = data
+  const { recent_events, stats, alerts, today_sessions } = data
   const { missing_summaries, at_risk_students, upcoming_future } = alerts ?? {}
+  const todaySessions = today_sessions ?? []
   const hebrewDate = getHebrewDateString()
   const holiday    = getTodayHoliday()
 
@@ -60,7 +61,7 @@ export default function DashboardPage() {
     <div>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">לוח בקרה</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">עמוד הבית</h1>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           <p className="text-sm text-gray-400 dark:text-gray-500">
             {new Date().toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
@@ -75,11 +76,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Row — DOM order reversed so urgent lands LEFT (inline-end) in RTL */}
+      {/* KPI Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="תלמידות פעילות" value={stats.students_count}   icon="👥" colorClass="bg-green-50 dark:bg-green-950" />
-        <StatCard label="פגישות היום"    value={todayMeetings.length}   icon="📅" colorClass="bg-blue-50 dark:bg-blue-950" />
-        <StatCard label="פגישות השבוע"   value={stats.events_this_week} icon="📋" colorClass="bg-purple-50 dark:bg-purple-950" />
+        <StatCard label="תלמידות פעילות"    value={stats.students_count}        icon="👥" colorClass="bg-green-50 dark:bg-green-950" />
+        <StatCard label="פגישות היום"       value={todayMeetings.length}        icon="📅" colorClass="bg-blue-50 dark:bg-blue-950" />
+        <StatCard label="שיעורים היום"      value={todaySessions.length}        icon="📚" colorClass="bg-indigo-50 dark:bg-indigo-950" />
         <StatCard label="דורש טיפול עכשיו" value={urgentCount} urgent />
       </div>
 

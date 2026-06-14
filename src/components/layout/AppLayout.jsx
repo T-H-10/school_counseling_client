@@ -4,14 +4,14 @@ import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import QuickActionModal from '../QuickActionModal'
 import AddStudentModal from '../AddStudentModal'
-import AddSessionModal from '../AddSessionModal'
+import AddLessonModal from '../AddLessonModal'
 import AddEventModal from '../AddEventModal'
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen]       = useState(false)
   const [quickOpen, setQuickOpen]           = useState(false)
   const [addStudentOpen, setAddStudentOpen] = useState(false)
-  const [addSessionOpen, setAddSessionOpen] = useState(false)
+  const [addLessonOpen, setAddLessonOpen] = useState(false)
   const [eventStudentId, setEventStudentId] = useState(null)
 
   return (
@@ -29,7 +29,7 @@ export default function AppLayout() {
         isOpen={quickOpen}
         onClose={() => setQuickOpen(false)}
         onActionStudent={() => { setQuickOpen(false); setAddStudentOpen(true) }}
-        onActionSession={() => { setQuickOpen(false); setAddSessionOpen(true) }}
+        onActionSession={() => { setQuickOpen(false); setAddLessonOpen(true) }}
         onActionEvent={(id) => { setQuickOpen(false); setEventStudentId(id) }}
       />
 
@@ -39,10 +39,10 @@ export default function AppLayout() {
         onSuccess={() => setAddStudentOpen(false)}
       />
 
-      <AddSessionModal
-        isOpen={addSessionOpen}
-        onClose={() => setAddSessionOpen(false)}
-        onSuccess={() => setAddSessionOpen(false)}
+      <AddLessonModal
+        isOpen={addLessonOpen}
+        onClose={() => setAddLessonOpen(false)}
+        onSuccess={() => setAddLessonOpen(false)}
       />
 
       <AddEventModal

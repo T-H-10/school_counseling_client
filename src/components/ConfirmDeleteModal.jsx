@@ -1,4 +1,4 @@
-export default function ConfirmDeleteModal({ isOpen, onConfirm, onCancel, confirming }) {
+export default function ConfirmDeleteModal({ isOpen, onConfirm, onCancel, confirming, message }) {
   if (!isOpen) return null
 
   return (
@@ -16,7 +16,7 @@ export default function ConfirmDeleteModal({ isOpen, onConfirm, onCancel, confir
 
         <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">האם אתה בטוח?</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-7 leading-relaxed">
-          פעולה זו תמחק את התלמיד/ה מהמערכת.
+          {message ?? 'פעולה זו תמחק את הרשומה מהמערכת.'}
         </p>
 
         <div className="flex items-center gap-3 justify-center">

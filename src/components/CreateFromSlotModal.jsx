@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { createStudentEvent } from '../api/studentProfile'
-import { createClassSession } from '../api/classSessions'
+import { createLesson } from '../api/lessons'
+import { createAssignment } from '../api/lessonAssignments'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
 import { parseApiError } from '../utils/apiError'
@@ -20,6 +21,7 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
   const [classLevels, setClassLevels] = useState([])
   const [schoolYears, setSchoolYears] = useState([])
   const [classLevel, setClassLevel]   = useState('')
+  const [classNumber, setClassNumber] = useState('')
   const [schoolYear, setSchoolYear]   = useState('')
   const [saving, setSaving]           = useState(false)
   const [validationError, setValidationError] = useState(null)
@@ -41,6 +43,7 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
       setEventType('meeting')
       setTitle('')
       setClassLevel('')
+      setClassNumber('')
       setSchoolYear('')
       setValidationError(null)
     }
@@ -66,14 +69,14 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
         })
         toast.success('הפגישה נשמרה בהצלחה')
       } else {
-        await createClassSession({
-          title,
-          school_year: schoolYear,
-          class_level: classLevel,
-          date:        new Date(startDt).toISOString(),
-          end_date:    endDt ? new Date(endDt).toISOString() : null,
+        const lesson = await createLesson({ title, school_year: schoolYear })
+        await createAssignment({
+          lesson:       lesson.id,
+          class_level:  classLevel,
+          class_number: classNumber ? Number(classNumber) : null,
+          planned_date: new Date(startDt).toISOString(),
         })
-        toast.success('השיעור נשמר בהצלחה')
+        toast.success('מערך השיעור נשמר בהצלחה')
       }
       onSuccess()
     } catch (err) {
@@ -169,6 +172,8 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
               setSchoolYear={setSchoolYear}
               classLevel={classLevel}
               setClassLevel={setClassLevel}
+              classNumber={classNumber}
+              setClassNumber={setClassNumber}
               activeYears={activeYears}
               otherYears={otherYears}
               classLevels={classLevels}

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { getHebrewDateString } from '../utils/hebrewDate'
 
 function formatDatetime(date) {
@@ -8,7 +9,8 @@ function formatDatetime(date) {
 }
 
 export default function EventDetailPanel({ event, onClose }) {
-  const isSession = event.resource?.type === 'class_session'
+  const navigate   = useNavigate()
+  const isSession  = event.resource?.type === 'class_session'
   const typeLabel = isSession ? 'שיעור קבוצתי' : 'פגישה אישית'
   const typeColor = isSession
     ? 'bg-green-100 text-green-700'
@@ -65,7 +67,15 @@ export default function EventDetailPanel({ event, onClose }) {
           </div>
         </div>
 
-        <div className="px-5 pb-5">
+        <div className="px-5 pb-5 space-y-2">
+          {isSession && event.resource?.lesson_id && (
+            <button
+              onClick={() => { onClose(); navigate(`/sessions/${event.resource.lesson_id}`) }}
+              className="w-full text-sm bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors font-medium"
+            >
+              עבור לדף השיעור ←
+            </button>
+          )}
           <button
             onClick={onClose}
             className="w-full text-sm text-gray-500 hover:text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"

@@ -36,7 +36,7 @@ function mapEvents(data) {
     end: e.end
       ? new Date(e.end)
       : new Date(new Date(e.start).getTime() + 30 * 60 * 1000),
-    resource: { type: e.type, with: e.with },
+    resource: { type: e.type, with: e.with, lesson_id: e.lesson_id },
   }))
 }
 
