@@ -29,7 +29,7 @@ export default function AppLayout() {
         isOpen={quickOpen}
         onClose={() => setQuickOpen(false)}
         onActionStudent={() => { setQuickOpen(false); setAddStudentOpen(true) }}
-        onActionSession={() => { setQuickOpen(false); setAddLessonOpen(true) }}
+        onActionLesson={() => { setQuickOpen(false); setAddLessonOpen(true) }}
         onActionEvent={(id) => { setQuickOpen(false); setEventStudentId(id) }}
       />
 

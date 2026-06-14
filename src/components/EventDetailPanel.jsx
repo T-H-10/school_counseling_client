@@ -10,12 +10,12 @@ function formatDatetime(date) {
 
 export default function EventDetailPanel({ event, onClose }) {
   const navigate   = useNavigate()
-  const isSession  = event.resource?.type === 'class_session'
-  const typeLabel = isSession ? 'שיעור קבוצתי' : 'פגישה אישית'
-  const typeColor = isSession
+  const isLesson  = event.resource?.type === 'lesson'
+  const typeLabel = isLesson ? 'שיעור קבוצתי' : 'פגישה אישית'
+  const typeColor = isLesson
     ? 'bg-green-100 text-green-700'
     : 'bg-blue-100 text-blue-700'
-  const withLabel = isSession ? 'כיתה' : 'תלמיד/ה'
+  const withLabel = isLesson ? 'כיתה' : 'תלמיד/ה'
 
   return (
     <div
@@ -68,9 +68,9 @@ export default function EventDetailPanel({ event, onClose }) {
         </div>
 
         <div className="px-5 pb-5 space-y-2">
-          {isSession && event.resource?.lesson_id && (
+          {isLesson && event.resource?.lesson_id && (
             <button
-              onClick={() => { onClose(); navigate(`/sessions/${event.resource.lesson_id}`) }}
+              onClick={() => { onClose(); navigate(`/lessons/${event.resource.lesson_id}`) }}
               className="w-full text-sm bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors font-medium"
             >
               עבור לדף השיעור ←

@@ -6,7 +6,7 @@ export default function QuickActionModal({
   isOpen,
   onClose,
   onActionStudent,
-  onActionSession,
+  onActionLesson,
   onActionEvent,
 }) {
   const [step, setStep] = useState('select')
@@ -25,7 +25,7 @@ export default function QuickActionModal({
     if (card.disabled) return
     if (card.id === 'meeting') { setStep('pick-student'); return }
     if (card.id === 'student') { onActionStudent(); return }
-    if (card.id === 'session') { onActionSession(); return }
+    if (card.id === 'lesson') { onActionLesson(); return }
   }
 
   function handleContinue() {

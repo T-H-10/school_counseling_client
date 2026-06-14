@@ -49,9 +49,9 @@ export default function DashboardPage() {
     )
   }
 
-  const { recent_events, stats, alerts, today_sessions } = data
+  const { recent_events, stats, alerts, today_lessons } = data
   const { missing_summaries, at_risk_students, upcoming_future } = alerts ?? {}
-  const todaySessions = today_sessions ?? []
+  const todayLessons = today_lessons ?? []
   const hebrewDate = getHebrewDateString()
   const holiday    = getTodayHoliday()
 
@@ -80,7 +80,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="תלמידות פעילות"    value={stats.students_count}        icon="👥" colorClass="bg-green-50 dark:bg-green-950" />
         <StatCard label="פגישות היום"       value={todayMeetings.length}        icon="📅" colorClass="bg-blue-50 dark:bg-blue-950" />
-        <StatCard label="שיעורים היום"      value={todaySessions.length}        icon="📚" colorClass="bg-indigo-50 dark:bg-indigo-950" />
+        <StatCard label="שיעורים היום"      value={todayLessons.length}        icon="📚" colorClass="bg-indigo-50 dark:bg-indigo-950" />
         <StatCard label="דורש טיפול עכשיו" value={urgentCount} urgent />
       </div>
 

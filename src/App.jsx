@@ -8,7 +8,7 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import StudentsPage from './pages/StudentsPage'
 import StudentProfilePage from './pages/StudentProfilePage'
-import SessionsPage from './pages/SessionsPage'
+import LessonsPage from './pages/LessonsPage'
 import LessonDetailPage from './pages/LessonDetailPage'
 import CalendarPage from './pages/CalendarPage'
 import ClassesPage from './pages/ClassesPage'
@@ -52,8 +52,8 @@ export default function App() {
             <Route index element={<DashboardPage />} />
             <Route path="students" element={<StudentsPage />} />
             <Route path="students/:id" element={<StudentProfilePage />} />
-            <Route path="sessions" element={<SessionsPage />} />
-            <Route path="sessions/:id" element={<LessonDetailPage />} />
+            <Route path="lessons" element={<LessonsPage />} />
+            <Route path="lessons/:id" element={<LessonDetailPage />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="classes" element={<ClassesPage />} />
           </Route>

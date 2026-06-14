@@ -17,7 +17,7 @@ export const CARDS = [
     border: 'border-2 border-green-400 dark:border-green-600',
   },
   {
-    id: 'session',
+    id: 'lesson',
     label: 'שיעור',
     icon: '📚',
     iconBg: 'bg-purple-100',

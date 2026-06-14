@@ -61,6 +61,58 @@ class StudentCardWidget(BasePage):
     def get_name(self) -> str:
         return self.root_locator.locator("p.font-bold").inner_text()
 
+    def click(self) -> "StudentProfilePage":
+        self.root_locator.click()
+        return StudentProfilePage(self.page)
+
+
+class EventWidget(BasePage):
+    def __init__(self, page, root_locator: Locator):
+        self.page = page
+        self.root_locator = root_locator
+
+    def get_title(self) -> str:
+        return self.root_locator.locator("p.font-semibold").inner_text()
+
+
+class AddEventModal(BasePage):
+    def __init__(self, page):
+        super().__init__(page)
+        self.title_input: Locator = page.get_by_placeholder("נושא הפגישה")
+        self.date_input: Locator = page.locator("input[type='datetime-local']")
+        self.submit_btn: Locator = page.get_by_role("button", name="שמור אירוע")
+
+    def fill_and_submit(self, title: str, date: str) -> "StudentProfilePage":
+        self.date_input.fill(date)
+        self.title_input.fill(title)
+        self.submit_btn.click()
+        self.page.wait_for_load_state("networkidle")
+        return StudentProfilePage(self.page)
+
+
+class StudentProfilePage(BasePage):
+    def __init__(self, page):
+        super().__init__(page)
+        self.back_link: Locator = page.get_by_text("חזרה לרשימת התלמידים")
+        self.add_event_btn: Locator = page.get_by_role("button", name="+ הוסף פגישה")
+
+    def get_back_link_text(self) -> str:
+        return self.back_link.inner_text()
+
+    def click_back(self) -> "StudentsPage":
+        self.back_link.click()
+        return StudentsPage(self.page)
+
+    def click_add_event(self) -> AddEventModal:
+        self.add_event_btn.click()
+        return AddEventModal(self.page)
+
+    def get_event_with_title(self, title: str) -> EventWidget:
+        root = self.page.locator("div.relative.mb-5").filter(
+            has=self.page.get_by_text(title, exact=True)
+        ).first
+        return EventWidget(self.page, root)
+
 
 class StudentsPage(BasePage):
     def __init__(self, page):
@@ -127,6 +179,41 @@ def test_search_student(page):
 
     card: StudentCardWidget = studentsPage.get_card_with_name("דנה כהן")
     assert card.get_name() == "דנה כהן"
+
+
+def test_open_student_profile(page):
+    page.goto("http://localhost:5173/login")
+    loginPage = LoginPage(page)
+    loginPage.fill_username_tb("counselor1")
+    loginPage.fill_password_tb("Test1234!")
+    loginPage.click_login_btn()
+
+    sidebar = SidebarComponent(page)
+    studentsPage: StudentsPage = sidebar.navigate_to_students()
+
+    card: StudentCardWidget = studentsPage.get_card_with_name("דנה כהן")
+    profilePage: StudentProfilePage = card.click()
+
+    assert profilePage.get_back_link_text() == "חזרה לרשימת התלמידים"
+
+
+def test_add_event_from_profile(page):
+    page.goto("http://localhost:5173/login")
+    LoginPage(page).fill_username_tb("counselor1")
+    page.get_by_placeholder("הכנס סיסמה").fill("Test1234!")
+    page.get_by_role("button", name="כניסה").click()
+
+    sidebar = SidebarComponent(page)
+    studentsPage: StudentsPage = sidebar.navigate_to_students()
+
+    card: StudentCardWidget = studentsPage.get_card_with_name("דנה כהן")
+    profilePage: StudentProfilePage = card.click()
+
+    modal: AddEventModal = profilePage.click_add_event()
+    profilePage = modal.fill_and_submit("פגישת בדיקה", "2026-06-13T10:00")
+
+    event: EventWidget = profilePage.get_event_with_title("פגישת בדיקה")
+    assert event.get_title() == "פגישת בדיקה"
 
 
 def test_login_failed(page):

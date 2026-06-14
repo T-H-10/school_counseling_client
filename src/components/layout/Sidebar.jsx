@@ -5,7 +5,7 @@ const navItems = [
   { to: '/', label: 'דף הבית', emoji: '🏠', end: true },
   { to: '/students', label: 'תלמידים', emoji: '🎒' },
   { to: '/classes', label: 'כיתות', emoji: '🏫' },
-  { to: '/sessions', label: 'שיעורים', emoji: '📚' },
+  { to: '/lessons', label: 'שיעורים', emoji: '📚' },
   { to: '/calendar', label: 'יומן', emoji: '📅' },
   { to: null, label: 'מסמכים', emoji: '📄', disabled: true },
 ]

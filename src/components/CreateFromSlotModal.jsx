@@ -9,7 +9,7 @@ import { parseApiError } from '../utils/apiError'
 import { toDatetimeLocal } from '../utils/datetime'
 import { inputClass } from '../utils/formClasses'
 import EventFields from './createFromSlot/EventFields'
-import SessionFields from './createFromSlot/SessionFields'
+import LessonFields from './createFromSlot/LessonFields'
 
 export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotStart, slotEnd }) {
   const [mode, setMode]           = useState('event')
@@ -125,9 +125,9 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
             </button>
             <button
               type="button"
-              onClick={() => setMode('session')}
+              onClick={() => setMode('lesson')}
               className={`flex-1 py-2 transition-colors border-r border-gray-200 ${
-                mode === 'session'
+                mode === 'lesson'
                   ? 'bg-green-600 text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
@@ -165,9 +165,9 @@ export default function CreateFromSlotModal({ isOpen, onClose, onSuccess, slotSt
             />
           )}
 
-          {/* School year + class level — session mode only */}
-          {mode === 'session' && (
-            <SessionFields
+          {/* School year + class level — lesson mode only */}
+          {mode === 'lesson' && (
+            <LessonFields
               schoolYear={schoolYear}
               setSchoolYear={setSchoolYear}
               classLevel={classLevel}

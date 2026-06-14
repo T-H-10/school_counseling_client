@@ -41,11 +41,11 @@ function mapEvents(data) {
 }
 
 function eventPropGetter(event) {
-  const isSession = event.resource?.type === 'class_session'
+  const isLesson = event.resource?.type === 'lesson'
   return {
     style: {
-      backgroundColor: isSession ? '#16a34a' : '#2563eb',
-      borderColor: isSession ? '#15803d' : '#1d4ed8',
+      backgroundColor: isLesson ? '#16a34a' : '#2563eb',
+      borderColor: isLesson ? '#15803d' : '#1d4ed8',
       color: 'white',
       borderRadius: '4px',
       fontSize: '12px',

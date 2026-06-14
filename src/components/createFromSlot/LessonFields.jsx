@@ -1,6 +1,6 @@
 import { inputClass } from '../../utils/formClasses'
 
-export default function SessionFields({
+export default function LessonFields({
   schoolYear,
   setSchoolYear,
   classLevel,

@@ -1,14 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { getLessons, deleteLesson } from '../api/lessons'
-import LessonCard from '../components/sessions/LessonCard'
-import SkeletonTable from '../components/sessions/SkeletonTable'
-import EmptyState from '../components/sessions/EmptyState'
+import LessonCard from '../components/lessons/LessonCard'
+import SkeletonTable from '../components/lessons/SkeletonTable'
+import EmptyState from '../components/lessons/EmptyState'
 import AddLessonModal from '../components/AddLessonModal'
 import EditLessonModal from '../components/EditLessonModal'
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal'
 
-export default function SessionsPage() {
+export default function LessonsPage() {
   const [lessons, setLessons]           = useState([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState(false)

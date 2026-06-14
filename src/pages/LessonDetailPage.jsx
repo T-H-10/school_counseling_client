@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { getLesson } from '../api/lessons'
 import { deleteAssignment } from '../api/lessonAssignments'
-import AssignmentCard from '../components/sessions/AssignmentCard'
+import AssignmentCard from '../components/lessons/AssignmentCard'
 import EditLessonModal from '../components/EditLessonModal'
 import AssignClassModal from '../components/AssignClassModal'
 import CompleteAssignmentModal from '../components/CompleteAssignmentModal'
@@ -77,7 +77,7 @@ export default function LessonDetailPage() {
   return (
     <div>
       <button
-        onClick={() => navigate('/sessions')}
+        onClick={() => navigate('/lessons')}
         className="mb-6 flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
       >
         <span>→</span>

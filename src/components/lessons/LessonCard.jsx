@@ -24,7 +24,7 @@ export default function LessonCard({ lesson, onEdit, onDelete }) {
   return (
     <div
       className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 cursor-pointer hover:shadow-md transition-all"
-      onClick={() => navigate(`/sessions/${lesson.id}`)}
+      onClick={() => navigate(`/lessons/${lesson.id}`)}
     >
       {/* Title row — in RTL: title on right, hover icons on left */}
       <div className="flex items-start justify-between gap-2 mb-1">
