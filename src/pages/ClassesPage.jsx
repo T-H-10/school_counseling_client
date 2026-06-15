@@ -99,7 +99,7 @@ export default function ClassesPage() {
   }
 
   return (
-    <div>
+    <div data-testid="classes-page">
       {/* Header */}
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
@@ -118,6 +118,7 @@ export default function ClassesPage() {
             {!showPromote ? (
               <button
                 onClick={() => setShowPromote(true)}
+                data-testid="classes-promote"
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 dark:hover:border-blue-500 text-gray-700 dark:text-gray-300 transition-colors"
               >
                 <span>📈</span>
@@ -129,6 +130,7 @@ export default function ClassesPage() {
                 <select
                   value={promoteToYear}
                   onChange={e => setPromoteToYear(e.target.value)}
+                  data-testid="classes-promote-year"
                   className="text-sm border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="">בחר שנה</option>
@@ -139,6 +141,7 @@ export default function ClassesPage() {
                 <button
                   onClick={handlePromote}
                   disabled={!promoteToYear || promoting}
+                  data-testid="classes-promote-confirm"
                   className="text-sm font-medium px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-md transition-colors flex items-center gap-1"
                 >
                   {promoting && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
@@ -172,13 +175,13 @@ export default function ClassesPage() {
       )}
 
       {error && (
-        <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-16 text-gray-500 dark:text-gray-400" data-testid="classes-error">
           <p className="text-lg">שגיאה בטעינת הכיתות</p>
         </div>
       )}
 
       {!loading && !error && classGroups.length === 0 && (
-        <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-16 text-gray-500 dark:text-gray-400" data-testid="classes-empty">
           <p className="text-4xl mb-3">🏫</p>
           <p className="text-lg font-medium">אין תלמידים רשומים לשנה הפעילה</p>
           <p className="text-sm mt-1">הוסף תלמידים ושייך אותם לכיתה כדי להציג את רשימת הכיתות</p>
@@ -196,6 +199,9 @@ export default function ClassesPage() {
               <div
                 key={key}
                 onClick={e => handleCardClick(room, e)}
+                data-testid="class-card"
+                data-class-level={room.class_level}
+                data-class-number={room.class_number}
                 className={`bg-white dark:bg-gray-800 rounded-xl border p-5 transition-all duration-150 group cursor-pointer ${
                   isEditing
                     ? 'border-blue-400 dark:border-blue-500 shadow-md'
@@ -226,11 +232,13 @@ export default function ClassesPage() {
                           if (e.key === 'Escape') cancelEdit(e)
                         }}
                         placeholder="שם המחנכ/ת"
+                        data-testid="class-card-teacher-input"
                         className="flex-1 text-sm border border-blue-300 dark:border-blue-600 rounded-md px-2 py-1 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
                       <button
                         onClick={e => saveTeacher(room, e)}
                         disabled={isSaving}
+                        data-testid="class-card-teacher-save"
                         className="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-green-50 dark:hover:bg-green-950 rounded-md disabled:opacity-50 transition-colors"
                         title="שמור"
                       >
@@ -253,6 +261,7 @@ export default function ClassesPage() {
                       </span>
                       <button
                         onClick={e => startEdit(room, e)}
+                        data-testid="class-card-edit-teacher"
                         className="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-all shrink-0"
                         title="עריכת מחנכ/ת"
                       >

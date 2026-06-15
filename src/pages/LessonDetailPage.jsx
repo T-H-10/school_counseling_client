@@ -75,9 +75,10 @@ export default function LessonDetailPage() {
   })
 
   return (
-    <div>
+    <div data-testid="lesson-detail-page">
       <button
         onClick={() => navigate('/lessons')}
+        data-testid="lesson-detail-back"
         className="mb-6 flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
       >
         <span>→</span>
@@ -89,9 +90,10 @@ export default function LessonDetailPage() {
 
         {/* Title + edit icon — RTL: h1 first → RIGHT, button last → LEFT */}
         <div className="flex items-center gap-2 mb-4">
-          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex-1">{lesson.title}</h1>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex-1" data-testid="lesson-detail-title">{lesson.title}</h1>
           <button
             onClick={() => setShowEdit(true)}
+            data-testid="lesson-detail-edit"
             className="text-gray-400 hover:text-indigo-600 transition-colors flex-shrink-0"
             aria-label="עריכה"
           >
@@ -105,6 +107,7 @@ export default function LessonDetailPage() {
         <div className="flex items-center gap-3 mb-5 justify-start flex-wrap">
           <button
             onClick={() => setShowAssign(true)}
+            data-testid="lesson-detail-assign"
             className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
           >
             🏫 שייך לכיתה נוספת
@@ -114,6 +117,7 @@ export default function LessonDetailPage() {
               href={lesson.presentation_url}
               target="_blank"
               rel="noopener noreferrer"
+              data-testid="lesson-detail-presentation"
               className="border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
             >
               🔗 פתח מצגת Drive

@@ -39,6 +39,7 @@ export default function QuickActionModal({
       onClick={onClose}
     >
       <div
+        data-testid="quick-action-modal"
         className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
@@ -47,6 +48,7 @@ export default function QuickActionModal({
           {step === 'pick-student' ? (
             <button
               onClick={() => setStep('select')}
+              data-testid="quick-action-back"
               className="text-blue-200 hover:text-white transition-colors"
               aria-label="חזרה"
             >
@@ -65,6 +67,7 @@ export default function QuickActionModal({
 
           <button
             onClick={onClose}
+            data-testid="quick-action-close"
             className="text-blue-200 hover:text-white transition-colors"
             aria-label="סגור"
           >

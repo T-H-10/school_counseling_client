@@ -2,12 +2,12 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
-  { to: '/', label: 'דף הבית', emoji: '🏠', end: true },
-  { to: '/students', label: 'תלמידים', emoji: '🎒' },
-  { to: '/classes', label: 'כיתות', emoji: '🏫' },
-  { to: '/lessons', label: 'שיעורים', emoji: '📚' },
-  { to: '/calendar', label: 'יומן', emoji: '📅' },
-  { to: null, label: 'מסמכים', emoji: '📄', disabled: true },
+  { to: '/', label: 'דף הבית', emoji: '🏠', end: true, testid: 'sidebar-link-home' },
+  { to: '/students', label: 'תלמידים', emoji: '🎒', testid: 'sidebar-link-students' },
+  { to: '/classes', label: 'כיתות', emoji: '🏫', testid: 'sidebar-link-classes' },
+  { to: '/lessons', label: 'שיעורים', emoji: '📚', testid: 'sidebar-link-lessons' },
+  { to: '/calendar', label: 'יומן', emoji: '📅', testid: 'sidebar-link-calendar' },
+  { to: null, label: 'מסמכים', emoji: '📄', disabled: true, testid: 'sidebar-link-documents' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -23,7 +23,7 @@ export default function Sidebar({ isOpen, onClose }) {
         />
       )}
 
-      <aside className={`fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col z-30 transition-transform duration-200 ${
+      <aside data-testid="sidebar" className={`fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col z-30 transition-transform duration-200 ${
         isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
       }`}>
 
@@ -37,10 +37,11 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {navItems.map(({ to, label, emoji, end, disabled }) =>
+          {navItems.map(({ to, label, emoji, end, disabled, testid }) =>
             disabled ? (
               <span
                 key={label}
+                data-testid={testid}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-60 select-none"
               >
                 <span className="text-base leading-none">{emoji}</span>
@@ -55,6 +56,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 to={to}
                 end={end}
                 onClick={onClose}
+                data-testid={testid}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     isActive
@@ -78,12 +80,13 @@ export default function Sidebar({ isOpen, onClose }) {
                 {username[0].toUpperCase()}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{username}</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate" data-testid="sidebar-username">{username}</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500">יועץ/ת בית ספרי</p>
               </div>
             </div>
             <button
               onClick={logout}
+              data-testid="sidebar-logout"
               className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-600 dark:hover:text-red-400 transition-colors border-t border-gray-100 dark:border-gray-800"
             >
               <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">

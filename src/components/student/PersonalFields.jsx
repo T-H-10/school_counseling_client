@@ -17,6 +17,7 @@ export default function PersonalFields({ form, fieldErrors, onChange }) {
           value={form.full_name}
           onChange={onChange}
           placeholder="שם פרטי ושם משפחה"
+          data-testid="student-full-name"
           className={fieldClass(fieldErrors.full_name)}
           maxLength={150}
           required
@@ -34,6 +35,7 @@ export default function PersonalFields({ form, fieldErrors, onChange }) {
           value={form.id_number}
           onChange={onChange}
           placeholder="8–9 ספרות"
+          data-testid="student-id-number"
           className={`${fieldClass(fieldErrors.id_number)} font-mono`}
           maxLength={9}
           required
@@ -49,6 +51,7 @@ export default function PersonalFields({ form, fieldErrors, onChange }) {
           value={form.address}
           onChange={onChange}
           placeholder="כתובת מגורים"
+          data-testid="student-address"
           className={fieldClass(fieldErrors.address)}
           maxLength={255}
         />

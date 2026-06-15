@@ -15,7 +15,7 @@ export default function AssignmentCard({ assignment: a, onComplete, onEditSummar
 
   if (isCompleted) {
     return (
-      <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 border-r-4 border-r-green-500 rounded-xl p-4 flex flex-col gap-2">
+      <div data-testid="assignment-card" data-assignment-id={a.id} className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 border-r-4 border-r-green-500 rounded-xl p-4 flex flex-col gap-2">
         {/* RTL: class label first → RIGHT, badge last → LEFT */}
         <div className="flex items-center justify-between">
           <p className="text-base font-bold text-gray-800 dark:text-gray-100">{classLabel}</p>
@@ -40,12 +40,14 @@ export default function AssignmentCard({ assignment: a, onComplete, onEditSummar
         <div className="flex items-center justify-between pt-1 border-t border-green-200 dark:border-green-900 mt-1">
           <button
             onClick={onEditSummary}
+            data-testid="assignment-edit-summary"
             className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 transition-colors font-medium"
           >
             ערוך סיכום
           </button>
           <button
             onClick={onDelete}
+            data-testid="assignment-delete"
             className="text-xs text-gray-400 hover:text-red-500 transition-colors"
           >
             מחק
@@ -56,7 +58,7 @@ export default function AssignmentCard({ assignment: a, onComplete, onEditSummar
   }
 
   return (
-    <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900 border-r-4 border-r-orange-400 rounded-xl p-4 flex flex-col gap-2">
+    <div data-testid="assignment-card" data-assignment-id={a.id} className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900 border-r-4 border-r-orange-400 rounded-xl p-4 flex flex-col gap-2">
       {/* RTL: class label first → RIGHT, badge last → LEFT */}
       <div className="flex items-center justify-between">
         <p className="text-base font-bold text-gray-800 dark:text-gray-100">{classLabel}</p>
@@ -75,12 +77,14 @@ export default function AssignmentCard({ assignment: a, onComplete, onEditSummar
       <div className="flex items-center justify-between pt-1 border-t border-orange-200 dark:border-orange-900 mt-1">
         <button
           onClick={onComplete}
+          data-testid="assignment-complete"
           className="text-sm border border-orange-400 dark:border-orange-600 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 px-3 py-1.5 rounded-lg transition-colors font-medium"
         >
           סמן כהושלם + סיכום
         </button>
         <button
           onClick={onDelete}
+          data-testid="assignment-delete"
           className="text-xs text-gray-400 hover:text-red-500 transition-colors"
         >
           מחק

@@ -3,7 +3,7 @@ import { relativeDate, EVENT_TYPE_ICONS } from './utils'
 
 export default function ActivityFeedCard({ recentEvents, eventsThisWeek }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5" data-testid="dashboard-activity-feed">
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">סיכום שבועי ופעולות אחרונות</h2>
         <Link to="/calendar"

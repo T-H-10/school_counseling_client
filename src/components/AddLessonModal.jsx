@@ -52,12 +52,13 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
+        data-testid="add-lesson-modal"
         className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100 dark:border-gray-800 sticky top-0 bg-white dark:bg-gray-900">
           <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">הוספת מערך שיעור</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">✕</button>
+          <button onClick={onClose} data-testid="add-lesson-close" className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">✕</button>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
@@ -71,6 +72,7 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
               value={form.title}
               onChange={handleChange}
               placeholder="נושא מערך השיעור"
+              data-testid="add-lesson-title"
               className={inputClass}
               maxLength={200}
               required
@@ -81,7 +83,7 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               שנת לימודים <span className="text-red-400">*</span>
             </label>
-            <select name="school_year" value={form.school_year} onChange={handleChange} className={inputClass} required>
+            <select name="school_year" value={form.school_year} onChange={handleChange} data-testid="add-lesson-year" className={inputClass} required>
               <option value="">בחר שנה</option>
               {activeYears.map(y => <option key={y.id} value={y.id}>{y.name} (פעיל)</option>)}
               {otherYears.map(y  => <option key={y.id} value={y.id}>{y.name}</option>)}
@@ -96,6 +98,7 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
               onChange={handleChange}
               rows={3}
               placeholder="תיאור קצר של מערך השיעור"
+              data-testid="add-lesson-description"
               className={`${inputClass} resize-none leading-relaxed`}
               dir="rtl"
             />
@@ -109,6 +112,7 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
               value={form.presentation_url}
               onChange={handleChange}
               placeholder="https://docs.google.com/..."
+              data-testid="add-lesson-url"
               className={inputClass}
               dir="ltr"
             />
@@ -118,6 +122,7 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
             <button
               type="submit"
               disabled={saving}
+              data-testid="add-lesson-submit"
               className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               {saving ? (
@@ -131,6 +136,7 @@ export default function AddLessonModal({ isOpen, onClose, onSuccess }) {
               type="button"
               onClick={onClose}
               disabled={saving}
+              data-testid="add-lesson-cancel"
               className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
             >
               ביטול

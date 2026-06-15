@@ -127,7 +127,7 @@ export default function CalendarPage() {
   }, [fetchEvents])
 
   return (
-    <div>
+    <div data-testid="calendar-page">
       {/* Page header */}
       <div className="flex items-center justify-between mb-5">
         <div>
@@ -156,7 +156,7 @@ export default function CalendarPage() {
       )}
 
       {/* Calendar card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-4" data-testid="calendar-container">
         <div style={{ height: 'calc(100vh - 248px)', direction: 'rtl' }}>
           <Calendar
             localizer={localizer}

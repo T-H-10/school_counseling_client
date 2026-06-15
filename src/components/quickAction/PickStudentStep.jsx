@@ -5,7 +5,7 @@ import { loadStudentOptions } from '../../utils/studentOptions'
 export default function PickStudentStep({ selectedStudent, setSelectedStudent, onClose, onContinue }) {
   return (
     <>
-      <div className="px-6 pt-5 pb-4">
+      <div className="px-6 pt-5 pb-4" data-testid="quick-action-student-select">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           בחר תלמיד/ה לפגישה
         </label>
@@ -34,6 +34,7 @@ export default function PickStudentStep({ selectedStudent, setSelectedStudent, o
         <button
           onClick={onContinue}
           disabled={!selectedStudent}
+          data-testid="quick-action-continue"
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors"
         >
           המשך

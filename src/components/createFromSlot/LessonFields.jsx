@@ -21,6 +21,7 @@ export default function LessonFields({
           <select
             value={schoolYear}
             onChange={e => setSchoolYear(e.target.value)}
+            data-testid="create-school-year"
             className={inputClass}
             required
           >
@@ -40,6 +41,7 @@ export default function LessonFields({
           <select
             value={classLevel}
             onChange={e => setClassLevel(e.target.value)}
+            data-testid="create-class-level"
             className={inputClass}
             required
           >
@@ -58,6 +60,7 @@ export default function LessonFields({
           onChange={e => setClassNumber(e.target.value)}
           min={1}
           placeholder="לדוגמה: 1"
+          data-testid="create-class-number"
           className={inputClass}
         />
       </div>

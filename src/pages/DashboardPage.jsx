@@ -58,7 +58,7 @@ export default function DashboardPage() {
   const urgentCount = (missing_summaries?.length ?? 0) + (at_risk_students?.count ?? 0)
 
   return (
-    <div>
+    <div data-testid="dashboard-page">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">עמוד הבית</h1>

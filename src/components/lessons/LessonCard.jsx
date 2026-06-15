@@ -23,17 +23,20 @@ export default function LessonCard({ lesson, onEdit, onDelete }) {
 
   return (
     <div
+      data-testid="lesson-card"
+      data-lesson-id={lesson.id}
       className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 cursor-pointer hover:shadow-md transition-all"
       onClick={() => navigate(`/lessons/${lesson.id}`)}
     >
       {/* Title row — in RTL: title on right, hover icons on left */}
       <div className="flex items-start justify-between gap-2 mb-1">
-        <p className="text-base font-bold text-gray-800 dark:text-gray-100 leading-snug text-right flex-1">
+        <p className="text-base font-bold text-gray-800 dark:text-gray-100 leading-snug text-right flex-1" data-testid="lesson-card-title">
           {lesson.title}
         </p>
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
           <button
             onClick={e => { e.stopPropagation(); onEdit(lesson) }}
+            data-testid="lesson-card-edit"
             className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
             aria-label="עריכה"
           >
@@ -43,6 +46,7 @@ export default function LessonCard({ lesson, onEdit, onDelete }) {
           </button>
           <button
             onClick={e => { e.stopPropagation(); onDelete(lesson.id) }}
+            data-testid="lesson-card-delete"
             className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
             aria-label="מחיקה"
           >

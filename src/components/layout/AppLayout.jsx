@@ -21,7 +21,7 @@ export default function AppLayout() {
         onToggleSidebar={() => setSidebarOpen(o => !o)}
         onOpenQuick={() => setQuickOpen(true)}
       />
-      <main className="md:mr-64 pt-16 p-6">
+      <main className="md:mr-64 pt-16 p-6" data-testid="app-content">
         <Outlet />
       </main>
 

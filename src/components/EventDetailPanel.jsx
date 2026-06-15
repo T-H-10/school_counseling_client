@@ -23,6 +23,7 @@ export default function EventDetailPanel({ event, onClose }) {
       onClick={onClose}
     >
       <div
+        data-testid="event-detail-panel"
         className="bg-white rounded-2xl shadow-xl w-full max-w-sm"
         onClick={e => e.stopPropagation()}
       >
@@ -41,7 +42,7 @@ export default function EventDetailPanel({ event, onClose }) {
 
         {/* Body */}
         <div className="px-5 py-4 space-y-3">
-          <h3 className="text-base font-semibold text-gray-800">{event.title}</h3>
+          <h3 className="text-base font-semibold text-gray-800" data-testid="event-detail-title">{event.title}</h3>
 
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
@@ -71,6 +72,7 @@ export default function EventDetailPanel({ event, onClose }) {
           {isLesson && event.resource?.lesson_id && (
             <button
               onClick={() => { onClose(); navigate(`/lessons/${event.resource.lesson_id}`) }}
+              data-testid="event-detail-goto-lesson"
               className="w-full text-sm bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors font-medium"
             >
               עבור לדף השיעור ←
@@ -78,6 +80,7 @@ export default function EventDetailPanel({ event, onClose }) {
           )}
           <button
             onClick={onClose}
+            data-testid="event-detail-close"
             className="w-full text-sm text-gray-500 hover:text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
           >
             סגור

@@ -6,7 +6,7 @@ export default function ContactCard({ student }) {
   )
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+    <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6" data-testid="student-profile-contact">
       <h2 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b border-gray-100">
         פרטי קשר
       </h2>

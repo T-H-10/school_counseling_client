@@ -3,7 +3,7 @@ import { futureDateBadge } from './utils'
 
 export default function FollowUpsCard({ items }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5" data-testid="dashboard-followups">
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">מעקבים קרובים</h2>
         <span className="text-gray-400 dark:text-gray-500">⏳</span>

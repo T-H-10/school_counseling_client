@@ -7,7 +7,7 @@ import { loadStudentOptions } from '../../utils/studentOptions'
 export default function EventFields({ student, setStudent, eventType, setEventType }) {
   return (
     <>
-      <div>
+      <div data-testid="create-student-select">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           תלמיד <span className="text-red-400">*</span>
         </label>
@@ -34,6 +34,7 @@ export default function EventFields({ student, setStudent, eventType, setEventTy
         <select
           value={eventType}
           onChange={e => setEventType(e.target.value)}
+          data-testid="create-event-type"
           className={inputClass}
           required
         >

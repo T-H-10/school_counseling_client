@@ -136,7 +136,7 @@ export default function StudentsPage() {
 
   return (
     <>
-      <div>
+      <div data-testid="students-page">
         <StudentsToolbar
           studentCount={totalCount}
           exporting={exporting}

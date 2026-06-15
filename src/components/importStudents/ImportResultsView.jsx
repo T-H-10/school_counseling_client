@@ -1,6 +1,6 @@
 export default function ImportResultsView({ result, onDone, onReset }) {
   return (
-    <div>
+    <div data-testid="import-students-results">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
           <span className="text-green-600 text-lg">✓</span>
@@ -32,6 +32,7 @@ export default function ImportResultsView({ result, onDone, onReset }) {
       <div className="flex items-center gap-3 mt-5">
         <button
           onClick={onDone}
+          data-testid="import-students-done"
           className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors"
         >
           סגור

@@ -55,13 +55,14 @@ export default function ImportFilePicker({
           type="file"
           accept=".xlsx"
           onChange={onFileChange}
+          data-testid="import-students-file"
           className="hidden"
           disabled={uploading}
         />
       </label>
 
       {generalError && (
-        <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-600">
+        <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-600" data-testid="import-students-error">
           {generalError}
         </div>
       )}
@@ -70,6 +71,7 @@ export default function ImportFilePicker({
         <button
           onClick={onUpload}
           disabled={!file || uploading}
+          data-testid="import-students-submit"
           className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
         >
           {uploading ? (

@@ -13,12 +13,13 @@ export default function Topbar({ onToggleSidebar, onOpenQuick }) {
   }
 
   return (
-    <header className="fixed top-0 right-0 md:right-64 left-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3 px-4 md:px-6 z-10">
+    <header data-testid="topbar" className="fixed top-0 right-0 md:right-64 left-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3 px-4 md:px-6 z-10">
 
       {/* Dark mode toggle — rightmost in topbar (first in RTL DOM) */}
       <button
         onClick={toggle}
         aria-label={isDark ? 'עבור למצב בהיר' : 'עבור למצב כהה'}
+        data-testid="theme-toggle"
         className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0"
       >
         {isDark ? (
@@ -51,6 +52,7 @@ export default function Topbar({ onToggleSidebar, onOpenQuick }) {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="חיפוש תלמיד, כיתה, מסמך..."
+            data-testid="topbar-search"
             className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pr-9 pl-4 py-2 text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 dark:focus:border-blue-500 transition-colors"
           />
         </div>
@@ -60,6 +62,7 @@ export default function Topbar({ onToggleSidebar, onOpenQuick }) {
       <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={onOpenQuick}
+          data-testid="quick-action-button"
           className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
         >
           <span className="text-base leading-none">+</span>
@@ -68,6 +71,7 @@ export default function Topbar({ onToggleSidebar, onOpenQuick }) {
 
         <button
           onClick={onToggleSidebar}
+          data-testid="sidebar-toggle"
           className="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="תפריט"
         >

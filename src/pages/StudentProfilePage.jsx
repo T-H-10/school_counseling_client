@@ -55,10 +55,11 @@ export default function StudentProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto" data-testid="student-profile-page">
       {/* Back link */}
       <button
         onClick={() => navigate('/students')}
+        data-testid="student-profile-back"
         className="mb-6 flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
       >
         <span>→</span>

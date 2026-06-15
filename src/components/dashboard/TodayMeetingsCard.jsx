@@ -3,7 +3,7 @@ import { formatTime, EVENT_TYPE_LABELS } from './utils'
 
 export default function TodayMeetingsCard({ meetings, onToggleStatus }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5" data-testid="dashboard-today-meetings">
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">פגישות היום</h2>
         <span className="text-gray-400 dark:text-gray-500">📅</span>
@@ -16,7 +16,7 @@ export default function TodayMeetingsCard({ meetings, onToggleStatus }) {
           {meetings.map(item => {
             const completed = item.status === 'completed'
             return (
-              <li key={item.id} className="flex items-start gap-3">
+              <li key={item.id} className="flex items-start gap-3" data-testid="today-meeting-item" data-event-id={item.id}>
                 <span className="text-xs font-mono text-gray-400 dark:text-gray-500 w-12 shrink-0 mt-1">
                   {formatTime(item.date)}
                 </span>
@@ -44,6 +44,7 @@ export default function TodayMeetingsCard({ meetings, onToggleStatus }) {
                 <button
                   onClick={() => onToggleStatus(item)}
                   aria-label={completed ? 'סמן כממתין' : 'סמן כהושלם'}
+                  data-testid="today-meeting-toggle"
                   className="shrink-0 mt-0.5 transition-colors"
                 >
                   {completed ? (

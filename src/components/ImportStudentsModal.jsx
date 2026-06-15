@@ -60,6 +60,7 @@ export default function ImportStudentsModal({ isOpen, onClose, onSuccess }) {
       onClick={(e) => { if (e.target === e.currentTarget && !uploading) handleClose() }}
     >
       <div
+        data-testid="import-students-modal"
         className="bg-white rounded-2xl shadow-xl w-full max-w-md"
         onClick={e => e.stopPropagation()}
       >
@@ -69,6 +70,7 @@ export default function ImportStudentsModal({ isOpen, onClose, onSuccess }) {
           <button
             onClick={handleClose}
             disabled={uploading}
+            data-testid="import-students-close"
             className="text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-lg leading-none"
           >
             ✕

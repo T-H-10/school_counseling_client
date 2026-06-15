@@ -51,12 +51,13 @@ export default function AssignClassModal({ lessonId, isOpen, onClose, onSuccess 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
+        data-testid="assign-class-modal"
         className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md"
         onClick={e => e.stopPropagation()}
       >
         {/* Blue header matching screenshot */}
         <div className="flex items-center justify-between px-6 py-4 bg-blue-600 rounded-t-2xl">
-          <button onClick={onClose} className="text-white/80 hover:text-white transition-colors text-lg leading-none">✕</button>
+          <button onClick={onClose} data-testid="assign-class-close" className="text-white/80 hover:text-white transition-colors text-lg leading-none">✕</button>
           <h2 className="text-base font-semibold text-white">שייך שיעור לכיתה 🏫</h2>
         </div>
 
@@ -69,6 +70,7 @@ export default function AssignClassModal({ lessonId, isOpen, onClose, onSuccess 
               name="class_level"
               value={form.class_level}
               onChange={handleChange}
+              data-testid="assign-class-level"
               className={inputClass}
               required
             >
@@ -88,6 +90,7 @@ export default function AssignClassModal({ lessonId, isOpen, onClose, onSuccess 
               onChange={handleChange}
               min={1}
               placeholder="לדוגמה: 1"
+              data-testid="assign-class-number"
               className={inputClass}
             />
           </div>
@@ -99,6 +102,7 @@ export default function AssignClassModal({ lessonId, isOpen, onClose, onSuccess 
               name="planned_date"
               value={form.planned_date}
               onChange={handleChange}
+              data-testid="assign-class-date"
               className={inputClass}
             />
           </div>
@@ -107,6 +111,7 @@ export default function AssignClassModal({ lessonId, isOpen, onClose, onSuccess 
             <button
               type="submit"
               disabled={saving}
+              data-testid="assign-class-submit"
               className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               {saving ? (
@@ -117,6 +122,7 @@ export default function AssignClassModal({ lessonId, isOpen, onClose, onSuccess 
               type="button"
               onClick={onClose}
               disabled={saving}
+              data-testid="assign-class-cancel"
               className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
             >
               ביטול

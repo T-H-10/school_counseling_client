@@ -57,6 +57,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
       onClick={onClose}
     >
       <div
+        data-testid="edit-event-modal"
         className="bg-white rounded-2xl shadow-xl w-full max-w-lg"
         onClick={e => e.stopPropagation()}
       >
@@ -65,6 +66,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
           <h2 className="text-base font-semibold text-gray-800">עריכת פגישה</h2>
           <button
             onClick={onClose}
+            data-testid="edit-event-close"
             className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none"
           >
             ✕
@@ -82,6 +84,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
               name="event_type"
               value={form.event_type}
               onChange={handleChange}
+              data-testid="edit-event-type"
               className={inputClass}
               required
             >
@@ -101,6 +104,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
               name="date"
               value={form.date}
               onChange={handleChange}
+              data-testid="edit-event-date"
               className={inputClass}
               required
             />
@@ -117,6 +121,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
               value={form.title}
               onChange={handleChange}
               placeholder="נושא הפגישה"
+              data-testid="edit-event-title"
               className={inputClass}
               maxLength={200}
               required
@@ -136,6 +141,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
                 onChange={handleChange}
                 rows={4}
                 placeholder="מה מתוכנן לדיון בפגישה?"
+                data-testid="edit-event-agenda"
                 className={`${inputClass} resize-none leading-relaxed`}
                 dir="rtl"
               />
@@ -154,6 +160,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
                     value={form.agenda}
                     onChange={handleChange}
                     rows={2}
+                    data-testid="edit-event-agenda"
                     className={`${inputClass} resize-none leading-relaxed bg-gray-50`}
                     dir="rtl"
                   />
@@ -169,6 +176,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
                   onChange={handleChange}
                   rows={4}
                   placeholder="כתוב סיכום הפגישה כאן..."
+                  data-testid="edit-event-summary"
                   className={`${inputClass} resize-none leading-relaxed`}
                   dir="rtl"
                 />
@@ -181,6 +189,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
             <button
               type="submit"
               disabled={saving}
+              data-testid="edit-event-submit"
               className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               {saving ? (
@@ -196,6 +205,7 @@ export default function EditEventModal({ event, isOpen, onClose, onSuccess }) {
               type="button"
               onClick={onClose}
               disabled={saving}
+              data-testid="edit-event-cancel"
               className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
             >
               ביטול

@@ -13,12 +13,14 @@ export default function StudentsFilterBar({ search, onSearchChange, classLevel, 
           placeholder="חיפוש חכם (שם, טלפון, ת״ז)..."
           value={search}
           onChange={e => onSearchChange(e.target.value)}
+          data-testid="students-search"
           className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 pr-9 pl-3 text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 dark:focus:border-blue-500 transition-colors"
         />
       </div>
       <select
         value={classLevel}
         onChange={e => onClassLevelChange(e.target.value)}
+        data-testid="students-filter-level"
         className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-colors"
       >
         <option value="">כל השכבות</option>
@@ -29,6 +31,7 @@ export default function StudentsFilterBar({ search, onSearchChange, classLevel, 
       <select
         value={classNumber}
         onChange={e => onClassNumberChange(e.target.value)}
+        data-testid="students-filter-class"
         className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-colors"
       >
         <option value="">כל הכיתות</option>

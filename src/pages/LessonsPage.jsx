@@ -44,7 +44,7 @@ export default function LessonsPage() {
   }
 
   return (
-    <div>
+    <div data-testid="lessons-page">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">מערכי שיעור</h1>
@@ -52,6 +52,7 @@ export default function LessonsPage() {
         </div>
         <button
           onClick={() => setShowAdd(true)}
+          data-testid="lessons-add"
           className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           + שיעור חדש

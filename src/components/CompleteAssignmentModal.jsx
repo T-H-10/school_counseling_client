@@ -54,6 +54,7 @@ export default function CompleteAssignmentModal({ assignment, isOpen, onClose, o
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
+        data-testid="complete-assignment-modal"
         className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
@@ -61,7 +62,7 @@ export default function CompleteAssignmentModal({ assignment, isOpen, onClose, o
           <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
             {isEdit ? 'עריכת סיכום' : 'סמן כהושלם + סיכום'}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">✕</button>
+          <button onClick={onClose} data-testid="complete-assignment-close" className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">✕</button>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
@@ -74,6 +75,7 @@ export default function CompleteAssignmentModal({ assignment, isOpen, onClose, o
               name="completed_date"
               value={form.completed_date}
               onChange={handleChange}
+              data-testid="complete-assignment-date"
               className={inputClass}
               required
             />
@@ -87,6 +89,7 @@ export default function CompleteAssignmentModal({ assignment, isOpen, onClose, o
               onChange={handleChange}
               rows={5}
               placeholder="כתוב סיכום השיעור כאן..."
+              data-testid="complete-assignment-summary"
               className={`${inputClass} resize-none leading-relaxed`}
               dir="rtl"
             />
@@ -96,6 +99,7 @@ export default function CompleteAssignmentModal({ assignment, isOpen, onClose, o
             <button
               type="submit"
               disabled={saving}
+              data-testid="complete-assignment-submit"
               className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               {saving ? (
@@ -106,6 +110,7 @@ export default function CompleteAssignmentModal({ assignment, isOpen, onClose, o
               type="button"
               onClick={onClose}
               disabled={saving}
+              data-testid="complete-assignment-cancel"
               className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
             >
               ביטול

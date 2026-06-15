@@ -8,6 +8,8 @@ export default function SelectStep({ onCardClick, onClose }) {
           <div
             key={card.id}
             onClick={() => onCardClick(card)}
+            data-testid="quick-action-card"
+            data-action={card.id}
             className={`relative rounded-2xl p-6 flex flex-col items-center gap-3 transition-all select-none
               ${card.cardBg} ${card.border}
               ${card.disabled

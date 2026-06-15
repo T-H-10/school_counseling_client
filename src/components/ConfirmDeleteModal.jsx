@@ -4,6 +4,7 @@ export default function ConfirmDeleteModal({ isOpen, onConfirm, onCancel, confir
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onCancel}>
       <div
+        data-testid="confirm-delete-modal"
         className="bg-white dark:bg-gray-900 rounded-2xl p-8 w-full max-w-sm text-center shadow-xl"
         onClick={e => e.stopPropagation()}
       >
@@ -23,6 +24,7 @@ export default function ConfirmDeleteModal({ isOpen, onConfirm, onCancel, confir
           <button
             onClick={onConfirm}
             disabled={confirming}
+            data-testid="confirm-delete-confirm"
             className="flex-1 bg-red-500 hover:bg-red-600 disabled:opacity-60 text-white font-medium py-2.5 rounded-xl transition-colors text-sm"
           >
             {confirming ? 'מוחק...' : 'כן, מחק רשומה'}
@@ -30,6 +32,7 @@ export default function ConfirmDeleteModal({ isOpen, onConfirm, onCancel, confir
           <button
             onClick={onCancel}
             disabled={confirming}
+            data-testid="confirm-delete-cancel"
             className="flex-1 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium py-2.5 rounded-xl transition-colors text-sm"
           >
             ביטול

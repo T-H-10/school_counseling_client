@@ -16,6 +16,7 @@ export default function ParentFields({ form, fieldErrors, onChange }) {
             value={form.mother_name}
             onChange={onChange}
             placeholder="שם האם"
+            data-testid="student-mother-name"
             className={fieldClass(fieldErrors.mother_name)}
             maxLength={100}
           />
@@ -29,6 +30,7 @@ export default function ParentFields({ form, fieldErrors, onChange }) {
             value={form.mother_phone}
             onChange={onChange}
             placeholder="05X-XXXXXXX"
+            data-testid="student-mother-phone"
             className={`${fieldClass(fieldErrors.mother_phone)} font-mono`}
             maxLength={20}
           />
@@ -45,6 +47,7 @@ export default function ParentFields({ form, fieldErrors, onChange }) {
             value={form.father_name}
             onChange={onChange}
             placeholder="שם האב"
+            data-testid="student-father-name"
             className={fieldClass(fieldErrors.father_name)}
             maxLength={100}
           />
@@ -58,6 +61,7 @@ export default function ParentFields({ form, fieldErrors, onChange }) {
             value={form.father_phone}
             onChange={onChange}
             placeholder="05X-XXXXXXX"
+            data-testid="student-father-phone"
             className={`${fieldClass(fieldErrors.father_phone)} font-mono`}
             maxLength={20}
           />

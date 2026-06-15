@@ -19,14 +19,14 @@ export default function ProfileHeader({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 flex-wrap mb-1">
-            <h1 className="text-2xl font-bold text-gray-800">{student.full_name}</h1>
+            <h1 className="text-2xl font-bold text-gray-800" data-testid="student-profile-name">{student.full_name}</h1>
             {student.current_class_level && (
               <span className="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
                 כיתה {student.current_class_level}׳ {student.current_class_number}
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500 font-mono mb-1">ת.ז. {student.id_number}</p>
+          <p className="text-sm text-gray-500 font-mono mb-1" data-testid="student-profile-id">ת.ז. {student.id_number}</p>
           {student.current_teacher && (
             <p className="text-sm text-gray-400 mb-4">מחנכ/ת: {student.current_teacher}</p>
           )}
@@ -34,12 +34,14 @@ export default function ProfileHeader({
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={onAddEvent}
+              data-testid="student-profile-add-event"
               className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
               + הוסף פגישה
             </button>
             <button
               onClick={onEdit}
+              data-testid="student-profile-edit"
               className="border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-600 hover:text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
               עריכה
@@ -47,6 +49,7 @@ export default function ProfileHeader({
             {!archiveConfirm ? (
               <button
                 onClick={() => setArchiveConfirm(true)}
+                data-testid="student-profile-delete"
                 className="border border-gray-200 hover:border-red-300 hover:bg-red-50 text-gray-400 hover:text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 מחיקה
@@ -57,6 +60,7 @@ export default function ProfileHeader({
                 <button
                   onClick={onArchive}
                   disabled={archiving}
+                  data-testid="student-profile-delete-confirm"
                   className="text-xs font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60 px-3 py-1 rounded-md transition-colors flex items-center gap-1"
                 >
                   {archiving && (
@@ -67,6 +71,7 @@ export default function ProfileHeader({
                 <button
                   onClick={() => setArchiveConfirm(false)}
                   disabled={archiving}
+                  data-testid="student-profile-delete-cancel"
                   className="text-xs text-red-600 hover:text-red-800 disabled:opacity-40 px-2 py-1 rounded-md transition-colors"
                 >
                   ביטול

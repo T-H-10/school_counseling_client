@@ -3,7 +3,7 @@ import { relativeDate } from './utils'
 
 export default function UrgentTasksCard({ urgentCount, missingSummaries, atRiskStudents }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden" data-testid="dashboard-urgent-tasks">
       <div className="flex items-center gap-2 px-5 py-3.5 border-b border-red-100 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40">
         <span>🔥</span>
         <h2 className="text-sm font-bold text-red-700 dark:text-red-400">משימות דורשות טיפול</h2>
@@ -26,6 +26,8 @@ export default function UrgentTasksCard({ urgentCount, missingSummaries, atRiskS
               </div>
               <Link
                 to={`/students/${item.student_id}`}
+                data-testid="urgent-add-summary"
+                data-student-id={item.student_id}
                 className="shrink-0 text-xs font-medium border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg px-3 py-1.5 transition-colors"
               >
                 הוסף סיכום

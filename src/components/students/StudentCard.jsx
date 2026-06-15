@@ -20,20 +20,23 @@ export default function StudentCard({ student, onEdit, onDelete }) {
 
   return (
     <div
+      data-testid="student-card"
+      data-student-id={student.id}
       className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 cursor-pointer hover:shadow-md hover:border-blue-200 dark:hover:border-blue-700 transition-all"
       onClick={() => navigate(`/students/${student.id}`)}
     >
       {/* Top row — RTL flex: badge on right (start), icons on left (end) on hover */}
       <div className="flex items-center justify-between mb-3">
         {isActive ? (
-          <span className="text-xs font-medium bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">פעילה</span>
+          <span className="text-xs font-medium bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full" data-testid="student-card-status">פעילה</span>
         ) : (
-          <span className="text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">לא פעילה</span>
+          <span className="text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full" data-testid="student-card-status">לא פעילה</span>
         )}
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
           {/* Pencil / edit */}
           <button
             onClick={e => { e.stopPropagation(); onEdit(student) }}
+            data-testid="student-card-edit"
             className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors"
             aria-label="עריכה"
           >
@@ -44,6 +47,7 @@ export default function StudentCard({ student, onEdit, onDelete }) {
           {/* Trash / delete */}
           <button
             onClick={e => { e.stopPropagation(); onDelete(student.id) }}
+            data-testid="student-card-delete"
             className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
             aria-label="מחיקה"
           >
@@ -55,7 +59,7 @@ export default function StudentCard({ student, onEdit, onDelete }) {
       </div>
 
       {/* Name */}
-      <p className="text-base font-bold text-gray-800 dark:text-gray-100 text-center mb-1">{student.full_name}</p>
+      <p className="text-base font-bold text-gray-800 dark:text-gray-100 text-center mb-1" data-testid="student-card-name">{student.full_name}</p>
 
       {/* Class */}
       <p className="text-sm text-center mb-3 text-gray-500 dark:text-gray-400">

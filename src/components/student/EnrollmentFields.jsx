@@ -15,6 +15,7 @@ export default function EnrollmentFields({ form, fieldErrors, onChange, schoolYe
           name="school_year"
           value={form.school_year}
           onChange={onChange}
+          data-testid="student-school-year"
           className={fieldClass(fieldErrors.school_year)}
           required
           disabled={loadingLists}
@@ -36,6 +37,7 @@ export default function EnrollmentFields({ form, fieldErrors, onChange, schoolYe
             name="class_level"
             value={form.class_level}
             onChange={onChange}
+            data-testid="student-class-level"
             className={fieldClass(fieldErrors.class_level)}
             required
             disabled={loadingLists}
@@ -57,6 +59,7 @@ export default function EnrollmentFields({ form, fieldErrors, onChange, schoolYe
             value={form.class_number}
             onChange={onChange}
             placeholder="1"
+            data-testid="student-class-number"
             className={`${fieldClass(fieldErrors.class_number)} font-mono`}
             min={1}
             max={99}

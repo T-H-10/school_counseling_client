@@ -36,11 +36,11 @@ export default function StudentsTable({ loading, loadingMore, error, students, o
   }, [hasMore, loadingMore, onLoadMore])
 
   if (error) {
-    return <div className="text-center py-16 text-red-500">שגיאה בטעינת התלמידים. אנא רענן את הדף.</div>
+    return <div className="text-center py-16 text-red-500" data-testid="students-error">שגיאה בטעינת התלמידים. אנא רענן את הדף.</div>
   }
 
   if (!loading && students.length === 0) {
-    return <div className="text-center py-16 text-gray-400">לא נמצאו תלמידים</div>
+    return <div className="text-center py-16 text-gray-400" data-testid="students-empty">לא נמצאו תלמידים</div>
   }
 
   return (

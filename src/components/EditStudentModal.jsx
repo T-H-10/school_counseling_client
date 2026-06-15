@@ -62,6 +62,7 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
       onClick={(e) => { if (e.target === e.currentTarget && !saving) onClose() }}
     >
       <div
+        data-testid="edit-student-modal"
         className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
@@ -70,6 +71,7 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
           <button
             onClick={onClose}
             disabled={saving}
+            data-testid="edit-student-close"
             className="text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-lg leading-none"
           >
             ✕
@@ -86,6 +88,7 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
             <button
               type="submit"
               disabled={saving}
+              data-testid="edit-student-submit"
               className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               {saving ? (
@@ -101,6 +104,7 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
               type="button"
               onClick={onClose}
               disabled={saving}
+              data-testid="edit-student-cancel"
               className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
             >
               ביטול
