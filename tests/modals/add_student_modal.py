@@ -13,6 +13,7 @@ class AddStudentModal(BasePage):
         self.class_level_select: Locator = page.get_by_test_id("student-class-level")
         self.class_number_input: Locator = page.get_by_test_id("student-class-number")
         self.submit_btn: Locator = page.get_by_test_id("add-student-submit")
+        self.cancel_btn: Locator = page.get_by_test_id("add-student-cancel")
         self.id_number_error: Locator = page.get_by_test_id("student-id-number").locator(
             "xpath=following-sibling::*[1]"
         )
@@ -33,6 +34,15 @@ class AddStudentModal(BasePage):
 
     def submit_expecting_error(self) -> None:
         self.submit_btn.click()
+
+    def cancel(self) -> "StudentsPage":
+        from pages.students_page import StudentsPage
+
+        # Live investigation showed Escape does not dismiss this modal; the
+        # backdrop stays mounted and blocks the UI. Cancel is the real close path.
+        self.cancel_btn.click()
+        self.root.wait_for(state="detached")
+        return StudentsPage(self.page)
 
     def get_id_number_error(self) -> str:
         return self.id_number_error.inner_text()

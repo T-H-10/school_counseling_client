@@ -61,6 +61,21 @@ def test_add_student_invalid_id_shows_error(logged_in_page):
     expect(modal.id_number_error).to_be_visible()
 
 
+def test_cancel_add_student_modal_closes_and_unblocks_ui(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+
+    modal = students.open_add_modal()
+    expect(modal.root).to_be_visible()
+
+    students = modal.cancel()
+
+    # The modal (and its blocking backdrop) is gone, so the app shell is usable:
+    # navigating away via the sidebar succeeds rather than being intercepted.
+    expect(modal.root).to_have_count(0)
+    calendar = Sidebar(logged_in_page).navigate_to_calendar()
+    assert calendar.get_page_header() == "לוח שנה"
+
+
 def test_filter_students_by_level(logged_in_page):
     students = Sidebar(logged_in_page).navigate_to_students()
 

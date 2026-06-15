@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 __pycache__/
+
+# Local-only ad-hoc Playwright investigation tooling (not part of the test suite)
+investigate_live.py
+investigation_artifacts/
