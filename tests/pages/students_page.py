@@ -9,6 +9,11 @@ class StudentsPage(BasePage):
         super().__init__(page)
         self.header: Locator = page.get_by_role("heading", name="תלמידים")
         self.search_input: Locator = page.get_by_placeholder("חיפוש חכם (שם, טלפון, ת״ז)...")
+        self.add_btn: Locator = page.get_by_test_id("students-add")
+        self.level_filter: Locator = page.get_by_test_id("students-filter-level")
+        self.count_label: Locator = page.get_by_test_id("students-count")
+        self.empty_state: Locator = page.get_by_test_id("students-empty")
+        self.cards: Locator = page.get_by_test_id("student-card")
 
     def get_page_header(self) -> str:
         return self.header.text_content()
@@ -24,3 +29,19 @@ class StudentsPage(BasePage):
             has=self.page.get_by_text(name, exact=True)
         ).first
         return StudentCard(self.page, root)
+
+    def open_add_modal(self) -> "AddStudentModal":
+        from modals.add_student_modal import AddStudentModal
+
+        self.add_btn.click()
+        return AddStudentModal(self.page)
+
+    def filter_by_level(self, level_name: str) -> None:
+        self.level_filter.select_option(label=f"שכבה {level_name}")
+        self.page.wait_for_load_state("networkidle")
+
+    def get_count_text(self) -> str:
+        return self.count_label.inner_text()
+
+    def selected_level_value(self) -> str:
+        return self.level_filter.input_value()
