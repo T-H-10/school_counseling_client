@@ -2,6 +2,8 @@ import urllib.request
 
 import pytest
 
+from pages import LoginPage
+
 CLIENT_URL = "http://localhost:5173"
 API_URL = "http://localhost:8000"
 
@@ -32,25 +34,20 @@ def require_servers():
         )
 
 
-def do_login(page, username="counselor1", password="Test1234!"):
+@pytest.fixture
+def login_page(page):
+    """A fresh LoginPage on the /login route."""
     page.goto("/login")
-
-    page.get_by_placeholder("הכנס שם משתמש").fill(username)
-    page.get_by_placeholder("הכנס סיסמה").fill(password)
-
-    page.get_by_role("button", name="כניסה").click()
-
-    # Land on the app shell — assert on a stable element, not an exact URL.
-    page.get_by_role("button", name="יציאה מהמערכת").wait_for()
+    return LoginPage(page)
 
 
 @pytest.fixture
 def logged_in_page(page):
-    do_login(page)
+    """The app shell after logging in as the seeded counselor."""
+    page.goto("/login")
+    login = LoginPage(page)
+    login.fill_username_tb("counselor1")
+    login.fill_password_tb("Test1234!")
+    home = login.click_login_btn()
+    home.header.wait_for()
     return page
-
-
-@pytest.fixture
-def login(logged_in_page):
-    # Alias kept so tests referencing `login` keep working.
-    return logged_in_page

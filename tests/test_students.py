@@ -1,23 +1,32 @@
-from playwright.sync_api import expect
-
-SEARCH_PLACEHOLDER = "חיפוש חכם (שם, טלפון, ת״ז)..."
+from components import Sidebar
 
 
-def test_students_page_loads(logged_in_page):
-    page = logged_in_page
+def test_search_student(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
 
-    page.get_by_role("link", name="תלמידים").click()
+    students.search("דנה")
 
-    expect(page.get_by_role("heading", name="תלמידים")).to_be_visible()
-    expect(page.get_by_placeholder(SEARCH_PLACEHOLDER)).to_be_visible()
+    card = students.get_card_with_name("דנה כהן")
+    assert card.get_name() == "דנה כהן"
 
 
-def test_students_search_accepts_input(logged_in_page):
-    page = logged_in_page
+def test_open_student_profile(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
 
-    page.get_by_role("link", name="תלמידים").click()
+    card = students.get_card_with_name("דנה כהן")
+    profile = card.click()
 
-    search = page.get_by_placeholder(SEARCH_PLACEHOLDER)
-    search.fill("דנה")
+    assert profile.get_back_link_text() == "חזרה לרשימת התלמידים"
 
-    expect(search).to_have_value("דנה")
+
+def test_add_event_from_profile(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+
+    card = students.get_card_with_name("דנה כהן")
+    profile = card.click()
+
+    modal = profile.click_add_event()
+    profile = modal.fill_and_submit("פגישת בדיקה", "2026-06-13T10:00")
+
+    event = profile.get_event_with_title("פגישת בדיקה")
+    assert event.get_title() == "פגישת בדיקה"

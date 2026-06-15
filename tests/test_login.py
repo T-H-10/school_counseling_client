@@ -1,18 +1,15 @@
-import re
+def test_login_success(login_page):
+    login_page.fill_username_tb("counselor1")
+    login_page.fill_password_tb("Test1234!")
 
-from playwright.sync_api import expect
+    home = login_page.click_login_btn()
+
+    assert home.get_page_header() == "עמוד הבית"
 
 
-def test_login_success(logged_in_page):
-    expect(logged_in_page.get_by_role("button", name="יציאה מהמערכת")).to_be_visible()
+def test_login_failed(login_page):
+    login_page.fill_username_tb("wrong_user")
+    login_page.fill_password_tb("wrong_password")
+    login_page.click_login_btn()
 
-
-def test_login_wrong_credentials(page):
-    page.goto("/login")
-
-    page.get_by_placeholder("הכנס שם משתמש").fill("counselor1")
-    page.get_by_placeholder("הכנס סיסמה").fill("wrong-password")
-    page.get_by_role("button", name="כניסה").click()
-
-    expect(page.get_by_text("שם משתמש או סיסמה שגויים. אנא נסה שנית.")).to_be_visible()
-    expect(page).to_have_url(re.compile(r"/login"))
+    assert login_page.get_login_error() == "שם משתמש או סיסמה שגויים. אנא נסה שנית."
