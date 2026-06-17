@@ -15,6 +15,21 @@ def test_add_lesson_appears_in_list(logged_in_page):
     assert card.get_title() == title
 
 
+def test_edit_lesson_title_persists(logged_in_page):
+    lessons = Sidebar(logged_in_page).navigate_to_lessons()
+    title = f"מערך לעריכה {unique_suffix()}"
+
+    modal = lessons.open_add_modal()
+    lessons = modal.fill_and_submit(title)
+    detail = lessons.get_card_with_title(title).click()
+
+    new_title = f"{title} (עודכן)"
+    detail = detail.open_edit_modal().set_title_and_submit(new_title)
+
+    # The detail header reflects the renamed lesson after the edit is saved.
+    assert detail.get_title() == new_title
+
+
 def test_open_lesson_detail_and_back(logged_in_page):
     lessons = Sidebar(logged_in_page).navigate_to_lessons()
     title = f"מערך לפרטים {unique_suffix()}"

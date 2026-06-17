@@ -1,3 +1,4 @@
+from components.assignment_card import AssignmentCard
 from components.class_card import ClassCard
 from components.event_card import EventCard
 from components.lesson_card import LessonCard
@@ -6,6 +7,7 @@ from components.student_card import StudentCard
 from components.topbar import Topbar
 
 __all__ = [
+    "AssignmentCard",
     "ClassCard",
     "EventCard",
     "LessonCard",
