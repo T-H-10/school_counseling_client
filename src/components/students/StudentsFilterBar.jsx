@@ -10,7 +10,7 @@ export default function StudentsFilterBar({ search, onSearchChange, classLevel, 
         </span>
         <input
           type="text"
-          placeholder="חיפוש חכם (שם, טלפון, ת״ז)..."
+          placeholder="חיפוש לפי שם או ת״ז..."
           value={search}
           onChange={e => onSearchChange(e.target.value)}
           data-testid="students-search"

@@ -4,9 +4,11 @@ from modals.add_student_modal import AddStudentModal
 from modals.assign_class_modal import AssignClassModal
 from modals.complete_assignment_modal import CompleteAssignmentModal
 from modals.confirm_delete_modal import ConfirmDeleteModal
+from modals.create_from_slot_modal import CreateFromSlotModal
 from modals.edit_event_modal import EditEventModal
 from modals.edit_lesson_modal import EditLessonModal
 from modals.edit_student_modal import EditStudentModal
+from modals.event_detail_panel import EventDetailPanel
 
 __all__ = [
     "AddEventModal",
@@ -15,7 +17,9 @@ __all__ = [
     "AssignClassModal",
     "CompleteAssignmentModal",
     "ConfirmDeleteModal",
+    "CreateFromSlotModal",
     "EditEventModal",
     "EditLessonModal",
     "EditStudentModal",
+    "EventDetailPanel",
 ]

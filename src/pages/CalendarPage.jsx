@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, cloneElement } from 'react'
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -74,6 +74,16 @@ function HebrewWeekHeader({ date, label }) {
       </div>
     </div>
   )
+}
+
+// Test hook only: tags each month day cell with a stable data-testid (and its date) so UI
+// tests can target slots without relying on react-big-calendar's internal markup. Clones the
+// existing background cell rather than wrapping it, so no DOM/layout change — purely additive.
+function DayCellWrapper({ children, value }) {
+  return cloneElement(children, {
+    'data-testid': 'calendar-day-cell',
+    'data-date': value?.toISOString(),
+  })
 }
 
 export default function CalendarPage() {
@@ -176,6 +186,7 @@ export default function CalendarPage() {
             popup
             selectable
             components={{
+              dateCellWrapper: DayCellWrapper,
               month: { dateHeader: HebrewMonthDateHeader },
               week:  { header: HebrewWeekHeader },
               day:   { header: HebrewWeekHeader },

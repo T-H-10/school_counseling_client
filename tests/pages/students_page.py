@@ -8,7 +8,7 @@ class StudentsPage(BasePage):
     def __init__(self, page):
         super().__init__(page)
         self.header: Locator = page.get_by_role("heading", name="תלמידים")
-        self.search_input: Locator = page.get_by_placeholder("חיפוש חכם (שם, טלפון, ת״ז)...")
+        self.search_input: Locator = page.get_by_placeholder("חיפוש לפי שם או ת״ז...")
         self.add_btn: Locator = page.get_by_test_id("students-add")
         self.level_filter: Locator = page.get_by_test_id("students-filter-level")
         self.count_label: Locator = page.get_by_test_id("students-count")

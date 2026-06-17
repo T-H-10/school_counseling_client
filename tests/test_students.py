@@ -13,6 +13,21 @@ def test_search_student(logged_in_page):
     assert card.get_name() == "דנה כהן"
 
 
+def test_search_student_by_id_number(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+    name = f"חיפוש תז {unique_suffix()}"
+    id_number = random_id_number()
+
+    modal = students.open_add_modal()
+    modal.fill_required(name, id_number)
+    students = modal.submit()
+
+    # The smart search matches on id_number, not only on name.
+    students.search(id_number)
+    card = students.get_card_with_name(name)
+    assert card.get_name() == name
+
+
 def test_open_student_profile(logged_in_page):
     students = Sidebar(logged_in_page).navigate_to_students()
 
