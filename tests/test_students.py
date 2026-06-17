@@ -35,6 +35,22 @@ def test_add_event_from_profile(logged_in_page):
     assert event.get_title() == "פגישת בדיקה"
 
 
+def test_edit_event_title_persists(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+    profile = students.get_card_with_name("דנה כהן").click()
+
+    original = f"פגישה לעריכה {unique_suffix()}"
+    modal = profile.click_add_event()
+    profile = modal.fill_and_submit(original, "2026-06-13T10:00")
+
+    updated = f"פגישה עודכנה {unique_suffix()}"
+    edit = profile.get_event_with_title(original).click_edit()
+    profile = edit.set_title_and_submit(updated)
+
+    # The timeline re-fetches on save, so the edited title replaces the original.
+    expect(profile.get_event_with_title(updated).root_locator).to_be_visible()
+
+
 def test_add_student_appears_in_search(logged_in_page):
     students = Sidebar(logged_in_page).navigate_to_students()
     name = f"תלמיד בדיקה {unique_suffix()}"
@@ -74,6 +90,27 @@ def test_cancel_add_student_modal_closes_and_unblocks_ui(logged_in_page):
     expect(modal.root).to_have_count(0)
     calendar = Sidebar(logged_in_page).navigate_to_calendar()
     assert calendar.get_page_header() == "לוח שנה"
+
+
+def test_edit_student_contact_persists(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+    name = f"עריכה {unique_suffix()}"
+
+    # Edit a freshly-created student rather than seed data, so the test is idempotent.
+    modal = students.open_add_modal()
+    modal.fill_required(name, random_id_number())
+    students = modal.submit()
+
+    students.search(name)
+    profile = students.get_card_with_name(name).click()
+
+    address = f"רחוב הבדיקה {unique_suffix()}"
+    edit = profile.click_edit()
+    profile = edit.set_contact_and_submit(address=address, mother_phone="0501234567")
+
+    # The profile re-fetches on save, so the contact card reflects the new details.
+    expect(profile.contact_card).to_contain_text(address)
+    expect(profile.contact_card).to_contain_text("0501234567")
 
 
 def test_filter_students_by_level(logged_in_page):
