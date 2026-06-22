@@ -42,7 +42,7 @@ export default function ClassesPage() {
 
   const handleCardClick = (room, e) => {
     if (editingKey === classKey(room)) return
-    navigate(`/students?class_level=${room.class_level}&class_number=${room.class_number}`)
+    navigate(`/classes/${room.class_level}/${room.class_number}`)
   }
 
   const startEdit = (room, e) => {

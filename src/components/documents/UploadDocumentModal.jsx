@@ -12,7 +12,7 @@ const ACCEPTED = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.tx
 
 const INITIAL = { category: 'general', title: '', description: '', class_number: '' }
 
-export default function UploadDocumentModal({ isOpen, onClose, onSuccess, document: doc, defaultCategory, presetStudent }) {
+export default function UploadDocumentModal({ isOpen, onClose, onSuccess, document: doc, defaultCategory, presetStudent, presetClassLevel, presetClassNumber }) {
   const isEdit = !!doc
 
   const [form, setForm]             = useState(INITIAL)
@@ -56,8 +56,8 @@ export default function UploadDocumentModal({ isOpen, onClose, onSuccess, docume
           : null
       )
     } else {
-      setForm({ ...INITIAL, category: defaultCategory ?? 'general' })
-      setSelectedClassLevel(null)
+      setForm({ ...INITIAL, category: defaultCategory ?? 'general', class_number: presetClassNumber ?? '' })
+      setSelectedClassLevel(presetClassLevel ?? null)
       setSelectedStudent(presetStudent ?? null)
     }
   }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -164,34 +164,52 @@ export default function UploadDocumentModal({ isOpen, onClose, onSuccess, docume
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className={labelClass}>כיתה <span className="text-red-400">*</span></label>
-                <select
-                  value={selectedClassLevel?.value ?? ''}
-                  onChange={e => {
-                    const cl = classLevels.find(c => String(c.id) === e.target.value)
-                    setSelectedClassLevel(cl ? { value: cl.id, label: cl.name } : null)
-                  }}
-                  data-testid="upload-document-class-level"
-                  className={inputCls}
-                  required
-                >
-                  <option value="">בחר כיתה</option>
-                  {classLevels.map(cl => (
-                    <option key={cl.id} value={cl.id}>{cl.name}׳</option>
-                  ))}
-                </select>
+                {presetClassLevel ? (
+                  <p
+                    data-testid="upload-document-class-level-preset"
+                    className={`${inputCls} cursor-default text-gray-500 dark:text-gray-400`}
+                  >
+                    {presetClassLevel.label}׳
+                  </p>
+                ) : (
+                  <select
+                    value={selectedClassLevel?.value ?? ''}
+                    onChange={e => {
+                      const cl = classLevels.find(c => String(c.id) === e.target.value)
+                      setSelectedClassLevel(cl ? { value: cl.id, label: cl.name } : null)
+                    }}
+                    data-testid="upload-document-class-level"
+                    className={inputCls}
+                    required
+                  >
+                    <option value="">בחר כיתה</option>
+                    {classLevels.map(cl => (
+                      <option key={cl.id} value={cl.id}>{cl.name}׳</option>
+                    ))}
+                  </select>
+                )}
                 {errors.class_level && <p className={errCls}>{errors.class_level}</p>}
               </div>
               <div className="w-28">
                 <label className={labelClass}>מס׳ כיתה</label>
-                <input
-                  type="number"
-                  value={form.class_number}
-                  onChange={e => set('class_number', e.target.value)}
-                  placeholder="1"
-                  data-testid="upload-document-class-number"
-                  className={inputCls}
-                  min={1}
-                />
+                {presetClassNumber ? (
+                  <p
+                    data-testid="upload-document-class-number-preset"
+                    className={`${inputCls} cursor-default text-gray-500 dark:text-gray-400`}
+                  >
+                    {presetClassNumber}
+                  </p>
+                ) : (
+                  <input
+                    type="number"
+                    value={form.class_number}
+                    onChange={e => set('class_number', e.target.value)}
+                    placeholder="1"
+                    data-testid="upload-document-class-number"
+                    className={inputCls}
+                    min={1}
+                  />
+                )}
               </div>
             </div>
           )}
