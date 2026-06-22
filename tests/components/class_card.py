@@ -21,8 +21,8 @@ class ClassCard(BasePage):
         # Edit mode collapses back to the read-only label once saved.
         expect(self.root_locator.get_by_test_id("class-card-teacher-input")).to_have_count(0)
 
-    def click(self) -> "StudentsPage":
-        from pages.students_page import StudentsPage
+    def click(self) -> "ClassDetailPage":
+        from pages.class_detail_page import ClassDetailPage
 
         self.root_locator.click()
-        return StudentsPage(self.page)
+        return ClassDetailPage(self.page)

@@ -8,6 +8,7 @@ export default function QuickActionModal({
   onActionStudent,
   onActionLesson,
   onActionEvent,
+  onActionDocument,
 }) {
   const [step, setStep] = useState('select')
   const [selectedStudent, setSelectedStudent] = useState(null)
@@ -26,6 +27,7 @@ export default function QuickActionModal({
     if (card.id === 'meeting') { setStep('pick-student'); return }
     if (card.id === 'student') { onActionStudent(); return }
     if (card.id === 'lesson') { onActionLesson(); return }
+    if (card.id === 'document') { onActionDocument(); return }
   }
 
   function handleContinue() {

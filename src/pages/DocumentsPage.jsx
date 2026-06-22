@@ -48,7 +48,7 @@ export default function DocumentsPage() {
         {TABS.map(({ key, label }) => (
           <button
             key={key}
-            onClick={() => setActiveTab(key)}
+            onClick={() => { setDocuments([]); setLoading(true); setActiveTab(key) }}
             data-testid={`documents-tab-${key}`}
             className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
               activeTab === key

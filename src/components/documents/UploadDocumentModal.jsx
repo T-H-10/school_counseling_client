@@ -52,7 +52,12 @@ export default function UploadDocumentModal({ isOpen, onClose, onSuccess, docume
       )
       setSelectedStudent(
         doc.student
-          ? { value: doc.student, label: doc.student_name ?? String(doc.student) }
+          ? {
+              value: doc.student,
+              label: doc.student_name && doc.student_id_number
+                ? `${doc.student_name} | ${doc.student_id_number}`
+                : doc.student_name ?? String(doc.student),
+            }
           : null
       )
     } else {

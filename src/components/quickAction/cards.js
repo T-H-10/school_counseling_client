@@ -31,6 +31,5 @@ export const CARDS = [
     iconBg: 'bg-orange-100',
     cardBg: 'bg-white dark:bg-gray-800',
     border: 'border border-gray-200 dark:border-gray-700',
-    disabled: true,
   },
 ]

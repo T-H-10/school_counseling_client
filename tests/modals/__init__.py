@@ -1,4 +1,5 @@
 from modals.add_event_modal import AddEventModal
+from modals.upload_document_modal import UploadDocumentModal
 from modals.add_lesson_modal import AddLessonModal
 from modals.add_student_modal import AddStudentModal
 from modals.assign_class_modal import AssignClassModal
@@ -12,6 +13,7 @@ from modals.event_detail_panel import EventDetailPanel
 
 __all__ = [
     "AddEventModal",
+    "UploadDocumentModal",
     "AddLessonModal",
     "AddStudentModal",
     "AssignClassModal",

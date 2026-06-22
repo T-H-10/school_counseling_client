@@ -6,7 +6,7 @@ import { DOCUMENT_CATEGORY_MAP, fileIcon, formatFileSize } from '../../constants
 import { parseApiError } from '../../utils/apiError'
 import ConfirmDeleteModal from '../ConfirmDeleteModal'
 
-export default function DocumentRow({ doc, onEdit, onDeleted }) {
+export default function DocumentRow({ doc, onEdit, onDeleted, compact }) {
   const [deleting, setDeleting]     = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [viewing, setViewing]       = useState(false)
@@ -73,16 +73,22 @@ export default function DocumentRow({ doc, onEdit, onDeleted }) {
         {/* Title + meta */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{doc.title}</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">
             {doc.file_name}
             {doc.file_size ? ` · ${formatFileSize(doc.file_size)}` : ''}
+            {!compact && doc.category === 'class' && doc.class_level_name &&
+              ` · כיתה ${doc.class_level_name}׳${doc.class_number ? ` ${doc.class_number}` : ''}`}
+            {!compact && doc.category === 'student' && doc.student_name &&
+              ` · ${doc.student_name}${doc.student_id_number ? ` | ${doc.student_id_number}` : ''}`}
           </p>
         </div>
 
-        {/* Category badge */}
-        <span className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${badge.classes}`}>
-          {badge.label}
-        </span>
+        {/* Category badge — hidden in compact (embedded) mode where category is always the same */}
+        {!compact && (
+          <span className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${badge.classes}`}>
+            {badge.label}
+          </span>
+        )}
 
         {/* Actions */}
         <div className="flex items-center gap-1 shrink-0">

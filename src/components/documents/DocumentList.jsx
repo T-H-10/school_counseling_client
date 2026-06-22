@@ -45,6 +45,7 @@ export default function DocumentList({ documents, loading, onRefresh, defaultCat
             doc={doc}
             onEdit={setEditingDoc}
             onDeleted={handleDeleted}
+            compact={compact}
           />
         ))}
       </div>

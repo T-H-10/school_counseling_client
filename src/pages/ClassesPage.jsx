@@ -42,7 +42,9 @@ export default function ClassesPage() {
 
   const handleCardClick = (room, e) => {
     if (editingKey === classKey(room)) return
-    navigate(`/classes/${room.class_level}/${room.class_number}`)
+    navigate(`/classes/${room.class_level}/${room.class_number}`, {
+      state: { levelName: room.class_level__name },
+    })
   }
 
   const startEdit = (room, e) => {

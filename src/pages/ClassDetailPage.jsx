@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getStudents } from '../api/students'
 import { getDocuments } from '../api/documents'
 import { getClassLevels } from '../api/classLevels'
@@ -9,8 +9,10 @@ import UploadDocumentModal from '../components/documents/UploadDocumentModal'
 export default function ClassDetailPage() {
   const { level, number } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const [levelName, setLevelName]     = useState(null)
+  // Use router state when navigating from ClassesPage (instant); fall back to API for direct URL.
+  const [levelName, setLevelName]     = useState(location.state?.levelName ?? null)
   const [students, setStudents]       = useState([])
   const [studentsLoading, setStudentsLoading] = useState(true)
   const [documents, setDocuments]     = useState([])
@@ -18,8 +20,9 @@ export default function ClassDetailPage() {
   const [docsError, setDocsError]     = useState(false)
   const [showUpload, setShowUpload]   = useState(false)
 
-  // Resolve the human-readable class level name (e.g. "ג") from the numeric ID
+  // Only fetch class levels when the name wasn't already available from router state.
   useEffect(() => {
+    if (levelName) return
     getClassLevels()
       .then(d => {
         const all = Array.isArray(d) ? d : d.results ?? []
@@ -27,14 +30,31 @@ export default function ClassDetailPage() {
         if (match) setLevelName(match.name)
       })
       .catch(() => {})
-  }, [level])
+  }, [level]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Fetch all pages so the full roster is shown for classes with > 20 students.
   useEffect(() => {
+    let cancelled = false
     setStudentsLoading(true)
-    getStudents({ class_level: level, class_number: number, page_size: 200 })
-      .then(d => setStudents(d.results ?? []))
+
+    const fetchAll = async () => {
+      let results = []
+      let page = 1
+      while (true) {
+        const data = await getStudents({ class_level: level, class_number: number, page })
+        results = [...results, ...(data.results ?? [])]
+        if (!data.next) break
+        page++
+      }
+      return results
+    }
+
+    fetchAll()
+      .then(list => { if (!cancelled) setStudents(list) })
       .catch(() => {})
-      .finally(() => setStudentsLoading(false))
+      .finally(() => { if (!cancelled) setStudentsLoading(false) })
+
+    return () => { cancelled = true }
   }, [level, number])
 
   const fetchDocs = useCallback(() => {

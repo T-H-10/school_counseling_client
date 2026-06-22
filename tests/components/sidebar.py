@@ -31,3 +31,9 @@ class Sidebar(BasePage):
 
         self.page.get_by_test_id("sidebar-link-calendar").click()
         return CalendarPage(self.page)
+
+    def navigate_to_documents(self) -> "DocumentsPage":
+        from pages.documents_page import DocumentsPage
+
+        self.page.get_by_test_id("sidebar-link-documents").click()
+        return DocumentsPage(self.page)
