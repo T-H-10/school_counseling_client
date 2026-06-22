@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { getStudents, exportStudentsExcel, archiveStudent } from '../api/students'
+import { downloadBlob } from '../utils/downloadBlob'
 import { getClassLevels } from '../api/classLevels'
 import AddStudentModal from '../components/AddStudentModal'
 import EditStudentModal from '../components/EditStudentModal'
@@ -100,12 +101,7 @@ export default function StudentsPage() {
     setExporting(true)
     try {
       const blob = await exportStudentsExcel()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'תלמידים.xlsx'
-      a.click()
-      URL.revokeObjectURL(url)
+      downloadBlob(blob, 'תלמידים.xlsx')
     } catch {
       // silent
     } finally {
