@@ -9,6 +9,7 @@ import SkeletonProfile from '../components/studentProfile/SkeletonProfile'
 import ProfileHeader from '../components/studentProfile/ProfileHeader'
 import ContactCard from '../components/studentProfile/ContactCard'
 import Timeline from '../components/studentProfile/Timeline'
+import StudentDocuments from '../components/studentProfile/StudentDocuments'
 
 export default function StudentProfilePage() {
   const { id } = useParams()
@@ -92,6 +93,7 @@ export default function StudentProfilePage() {
           />
           <ContactCard student={student} />
           <Timeline timeline={timeline} onEdit={setEditingEvent} />
+          <StudentDocuments studentId={id} studentName={student?.full_name} />
         </>
       )}
 

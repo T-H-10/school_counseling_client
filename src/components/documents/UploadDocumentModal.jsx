@@ -12,7 +12,7 @@ const ACCEPTED = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.tx
 
 const INITIAL = { category: 'general', title: '', description: '', class_number: '' }
 
-export default function UploadDocumentModal({ isOpen, onClose, onSuccess, document: doc, defaultCategory }) {
+export default function UploadDocumentModal({ isOpen, onClose, onSuccess, document: doc, defaultCategory, presetStudent }) {
   const isEdit = !!doc
 
   const [form, setForm]             = useState(INITIAL)
@@ -58,7 +58,7 @@ export default function UploadDocumentModal({ isOpen, onClose, onSuccess, docume
     } else {
       setForm({ ...INITIAL, category: defaultCategory ?? 'general' })
       setSelectedClassLevel(null)
-      setSelectedStudent(null)
+      setSelectedStudent(presetStudent ?? null)
     }
   }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -200,18 +200,27 @@ export default function UploadDocumentModal({ isOpen, onClose, onSuccess, docume
           {form.category === 'student' && (
             <div>
               <label className={labelClass}>תלמיד <span className="text-red-400">*</span></label>
-              <AsyncSelect
-                loadOptions={loadStudentOptions}
-                onChange={setSelectedStudent}
-                value={selectedStudent}
-                placeholder="חפש תלמיד..."
-                noOptionsMessage={({ inputValue }) =>
-                  inputValue.length < 2 ? 'הקלד לפחות 2 תווים לחיפוש' : 'לא נמצאו תלמידים'
-                }
-                styles={selectStyles}
-                inputId="upload-document-student"
-                data-testid="upload-document-student"
-              />
+              {presetStudent ? (
+                <p
+                  data-testid="upload-document-student-preset"
+                  className={`${inputCls} cursor-default text-gray-500 dark:text-gray-400`}
+                >
+                  {presetStudent.label}
+                </p>
+              ) : (
+                <AsyncSelect
+                  loadOptions={loadStudentOptions}
+                  onChange={setSelectedStudent}
+                  value={selectedStudent}
+                  placeholder="חפש תלמיד..."
+                  noOptionsMessage={({ inputValue }) =>
+                    inputValue.length < 2 ? 'הקלד לפחות 2 תווים לחיפוש' : 'לא נמצאו תלמידים'
+                  }
+                  styles={selectStyles}
+                  inputId="upload-document-student"
+                  data-testid="upload-document-student"
+                />
+              )}
               {errors.student && <p className={errCls}>{errors.student}</p>}
             </div>
           )}
