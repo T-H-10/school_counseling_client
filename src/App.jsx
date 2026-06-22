@@ -12,6 +12,7 @@ import LessonsPage from './pages/LessonsPage'
 import LessonDetailPage from './pages/LessonDetailPage'
 import CalendarPage from './pages/CalendarPage'
 import ClassesPage from './pages/ClassesPage'
+import DocumentsPage from './pages/DocumentsPage'
 
 function ThemedToaster() {
   const { isDark } = useTheme()
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="lessons/:id" element={<LessonDetailPage />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="classes" element={<ClassesPage />} />
+            <Route path="documents" element={<DocumentsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

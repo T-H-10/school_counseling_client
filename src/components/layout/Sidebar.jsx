@@ -7,7 +7,7 @@ const navItems = [
   { to: '/classes', label: 'כיתות', emoji: '🏫', testid: 'sidebar-link-classes' },
   { to: '/lessons', label: 'שיעורים', emoji: '📚', testid: 'sidebar-link-lessons' },
   { to: '/calendar', label: 'יומן', emoji: '📅', testid: 'sidebar-link-calendar' },
-  { to: null, label: 'מסמכים', emoji: '📄', disabled: true, testid: 'sidebar-link-documents' },
+  { to: '/documents', label: 'מסמכים', emoji: '📄', testid: 'sidebar-link-documents' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
