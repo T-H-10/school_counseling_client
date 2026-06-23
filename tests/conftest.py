@@ -1,6 +1,7 @@
 import urllib.request
 
 import pytest
+from pathlib import Path
 
 from pages import LoginPage
 
@@ -51,3 +52,21 @@ def logged_in_page(page):
     home = login.click_login_btn()
     home.header.wait_for()
     return page
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, f"rep_{call.when}", rep)
+
+
+@pytest.fixture(autouse=True)
+def save_dom_on_failure(request, page):
+    yield
+    if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
+        snapshot_dir = Path("tests/_snapshots")
+        snapshot_dir.mkdir(exist_ok=True)
+        (snapshot_dir / f"{request.node.name}.html").write_text(
+            page.content(), encoding="utf-8"
+        )

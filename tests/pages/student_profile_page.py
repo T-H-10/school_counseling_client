@@ -9,7 +9,7 @@ class StudentProfilePage(BasePage):
     def __init__(self, page):
         super().__init__(page)
         self.back_link: Locator = page.get_by_text("חזרה לרשימת התלמידים")
-        self.add_event_btn: Locator = page.get_by_role("button", name="+ הוסף פגישה")
+        self.add_event_btn: Locator = page.get_by_test_id("student-profile-add-event")
         self.edit_btn: Locator = page.get_by_test_id("student-profile-edit")
         self.name_heading: Locator = page.get_by_test_id("student-profile-name")
         self.contact_card: Locator = page.get_by_test_id("student-profile-contact")
@@ -28,7 +28,9 @@ class StudentProfilePage(BasePage):
         return EditStudentModal(self.page)
 
     def get_event_with_title(self, title: str) -> EventCard:
-        root = self.page.locator("div.relative.mb-5").filter(
-            has=self.page.get_by_text(title, exact=True)
+        root = self.page.get_by_test_id("timeline-event").filter(
+            has=self.page.get_by_test_id("timeline-event-title").filter(
+                has_text=title
+            )
         ).first
         return EventCard(self.page, root)

@@ -9,7 +9,7 @@ class EventCard(BasePage):
         self.root_locator = root_locator
 
     def get_title(self) -> str:
-        return self.root_locator.locator("p.font-semibold").inner_text()
+        return self.root_locator.get_by_test_id("timeline-event-title").inner_text()
 
     def click_edit(self) -> "EditEventModal":
         from modals.edit_event_modal import EditEventModal
