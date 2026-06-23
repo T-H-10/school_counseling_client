@@ -4,6 +4,7 @@ import { createStudent } from '../api/students'
 import { getClassLevels } from '../api/classLevels'
 import { getSchoolYears } from '../api/schoolYears'
 import { parseApiErrors } from '../utils/apiError'
+import { validateIsraeliId } from '../utils/validateId'
 import PersonalFields from './student/PersonalFields'
 import EnrollmentFields from './student/EnrollmentFields'
 import ParentFields from './student/ParentFields'
@@ -57,6 +58,12 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
     e.preventDefault()
     setSaving(true)
     setFieldErrors({})
+
+    if (!validateIsraeliId(form.id_number)) {
+      setFieldErrors({ id_number: ['מספר תעודת זהות לא תקין'] })
+      setSaving(false)
+      return
+    }
 
     const payload = Object.fromEntries(
       Object.entries(form).filter(([, v]) => v !== '')

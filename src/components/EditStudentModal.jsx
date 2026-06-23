@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { updateStudent } from '../api/students'
 import { parseApiErrors } from '../utils/apiError'
+import { validateIsraeliId } from '../utils/validateId'
 import PersonalFields from './student/PersonalFields'
 import ParentFields from './student/ParentFields'
 
@@ -38,6 +39,12 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
     e.preventDefault()
     setSaving(true)
     setFieldErrors({})
+
+    if (!validateIsraeliId(form.id_number)) {
+      setFieldErrors({ id_number: ['מספר תעודת זהות לא תקין'] })
+      setSaving(false)
+      return
+    }
 
     const payload = Object.fromEntries(
       Object.entries(form).filter(([, v]) => v !== '')
