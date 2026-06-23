@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import SupportModal from '../SupportModal'
 
 const navItems = [
   { to: '/', label: 'דף הבית', emoji: '🏠', end: true, testid: 'sidebar-link-home' },
@@ -10,9 +12,18 @@ const navItems = [
   { to: '/documents', label: 'מסמכים', emoji: '📄', testid: 'sidebar-link-documents' },
 ]
 
+const adminItems = [
+  { to: '/admin/schools', label: 'בתי ספר', emoji: '🏫', testid: 'sidebar-link-admin-schools' },
+  { to: '/admin/counselors', label: 'יועצים', emoji: '👤', testid: 'sidebar-link-admin-counselors' },
+  { to: '/admin/school-years', label: 'שנות לימודים', emoji: '📆', testid: 'sidebar-link-admin-years' },
+  { to: '/admin/support', label: 'פניות', emoji: '📬', testid: 'sidebar-link-admin-support' },
+]
+
 export default function Sidebar({ isOpen, onClose }) {
   const { user, logout } = useAuth()
   const username = user?.username ?? ''
+  const isAdmin = user?.isAdmin === true
+  const [supportOpen, setSupportOpen] = useState(false)
 
   return (
     <>
@@ -72,6 +83,45 @@ export default function Sidebar({ isOpen, onClose }) {
           )}
         </nav>
 
+        {/* Admin section */}
+        {isAdmin && (
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <p className="px-4 mb-1 text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider">ניהול</p>
+            {adminItems.map(({ to, label, emoji, testid }) => (
+              <NavLink
+                key={to}
+                to={to}
+                onClick={onClose}
+                data-testid={testid}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`
+                }
+              >
+                <span className="text-base leading-none">{emoji}</span>
+                {label}
+              </NavLink>
+            ))}
+          </div>
+        )}
+
+        {/* Contact admin button — visible to counselors (non-admins) */}
+        {!isAdmin && (
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <button
+              onClick={() => setSupportOpen(true)}
+              data-testid="sidebar-support-btn"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            >
+              <span className="text-base leading-none">💬</span>
+              פנייה למנהל המערכת
+            </button>
+          </div>
+        )}
+
         {/* User section */}
         {username && (
           <div className="border-t border-gray-100 dark:border-gray-800 shrink-0">
@@ -81,7 +131,7 @@ export default function Sidebar({ isOpen, onClose }) {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate" data-testid="sidebar-username">{username}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">יועץ/ת בית ספרי</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{isAdmin ? 'מנהל מערכת' : 'יועץ/ת בית ספרי'}</p>
               </div>
             </div>
             <button
@@ -97,6 +147,8 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
         )}
       </aside>
+
+      <SupportModal isOpen={supportOpen} onClose={() => setSupportOpen(false)} />
     </>
   )
 }

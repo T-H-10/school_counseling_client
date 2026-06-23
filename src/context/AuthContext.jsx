@@ -19,11 +19,14 @@ export function AuthProvider({ children }) {
       username,
       password,
     })
+    const raw = data.access.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const payload = JSON.parse(atob(raw))
+    const user = { username, isAdmin: payload.is_staff === true }
     localStorage.setItem('accessToken', data.access)
     localStorage.setItem('refreshToken', data.refresh)
-    localStorage.setItem('user', JSON.stringify({ username }))
+    localStorage.setItem('user', JSON.stringify(user))
     setAccessToken(data.access)
-    setUser({ username })
+    setUser(user)
   }
 
   function logout() {

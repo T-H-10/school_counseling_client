@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
@@ -14,6 +15,10 @@ import CalendarPage from './pages/CalendarPage'
 import ClassesPage from './pages/ClassesPage'
 import DocumentsPage from './pages/DocumentsPage'
 import ClassDetailPage from './pages/ClassDetailPage'
+import AdminSchoolsPage from './pages/admin/AdminSchoolsPage'
+import AdminCounselorsPage from './pages/admin/AdminCounselorsPage'
+import AdminSchoolYearsPage from './pages/admin/AdminSchoolYearsPage'
+import AdminSupportPage from './pages/admin/AdminSupportPage'
 
 function ThemedToaster() {
   const { isDark } = useTheme()
@@ -60,6 +65,10 @@ export default function App() {
             <Route path="classes" element={<ClassesPage />} />
             <Route path="classes/:level/:number" element={<ClassDetailPage />} />
             <Route path="documents" element={<DocumentsPage />} />
+            <Route path="admin/schools" element={<AdminRoute><AdminSchoolsPage /></AdminRoute>} />
+            <Route path="admin/counselors" element={<AdminRoute><AdminCounselorsPage /></AdminRoute>} />
+            <Route path="admin/school-years" element={<AdminRoute><AdminSchoolYearsPage /></AdminRoute>} />
+            <Route path="admin/support" element={<AdminRoute><AdminSupportPage /></AdminRoute>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
