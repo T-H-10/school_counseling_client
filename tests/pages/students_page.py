@@ -14,6 +14,9 @@ class StudentsPage(BasePage):
         self.count_label: Locator = page.get_by_test_id("students-count")
         self.empty_state: Locator = page.get_by_test_id("students-empty")
         self.cards: Locator = page.get_by_test_id("student-card")
+        self.active_tab: Locator = page.get_by_test_id("students-tab-active")
+        self.inactive_tab: Locator = page.get_by_test_id("students-tab-inactive")
+        self.export_btn: Locator = page.get_by_test_id("students-export")
 
     def get_page_header(self) -> str:
         return self.header.text_content()
@@ -45,3 +48,13 @@ class StudentsPage(BasePage):
 
     def selected_level_value(self) -> str:
         return self.level_filter.input_value()
+
+    def click_inactive_tab(self) -> "StudentsPage":
+        self.inactive_tab.click()
+        self.page.wait_for_load_state("networkidle")
+        return self
+
+    def click_active_tab(self) -> "StudentsPage":
+        self.active_tab.click()
+        self.page.wait_for_load_state("networkidle")
+        return self

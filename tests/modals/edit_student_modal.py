@@ -18,6 +18,10 @@ class EditStudentModal(BasePage):
         self.father_phone_input: Locator = page.get_by_test_id("student-father-phone")
         self.submit_btn: Locator = page.get_by_test_id("edit-student-submit")
         self.cancel_btn: Locator = page.get_by_test_id("edit-student-cancel")
+        # FieldError <p> has no data-testid; use xpath sibling traversal.
+        self.mother_phone_error: Locator = page.get_by_test_id("student-mother-phone").locator(
+            "xpath=following-sibling::*[1]"
+        )
 
     def set_contact_and_submit(self, address: str, mother_phone: str) -> "StudentProfilePage":
         from pages.student_profile_page import StudentProfilePage
@@ -28,6 +32,12 @@ class EditStudentModal(BasePage):
         self.root.wait_for(state="detached")
         self.page.wait_for_load_state("networkidle")
         return StudentProfilePage(self.page)
+
+    def submit_expecting_error(self) -> "EditStudentModal":
+        # Clicks submit but does NOT wait for the modal to close — caller checks
+        # the error locators while the modal remains open.
+        self.submit_btn.click()
+        return self
 
     def cancel(self) -> "StudentProfilePage":
         from pages.student_profile_page import StudentProfilePage

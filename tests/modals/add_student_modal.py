@@ -14,6 +14,11 @@ class AddStudentModal(BasePage):
         self.class_number_input: Locator = page.get_by_test_id("student-class-number")
         self.submit_btn: Locator = page.get_by_test_id("add-student-submit")
         self.cancel_btn: Locator = page.get_by_test_id("add-student-cancel")
+        # FieldError <p> is the immediate following sibling of the input wrapper —
+        # no data-testid available; xpath sibling traversal is the stable approach.
+        self.full_name_error: Locator = page.get_by_test_id("student-full-name").locator(
+            "xpath=following-sibling::*[1]"
+        )
         self.id_number_error: Locator = page.get_by_test_id("student-id-number").locator(
             "xpath=following-sibling::*[1]"
         )
@@ -46,3 +51,6 @@ class AddStudentModal(BasePage):
 
     def get_id_number_error(self) -> str:
         return self.id_number_error.inner_text()
+
+    def get_full_name_error(self) -> str:
+        return self.full_name_error.inner_text()
