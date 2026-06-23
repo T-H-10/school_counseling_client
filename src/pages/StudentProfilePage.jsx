@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getStudent, getStudentTimeline } from '../api/studentProfile'
 import { archiveStudent } from '../api/students'
+import { getStudentEnrollments } from '../api/enrollments'
 import AddEventModal from '../components/AddEventModal'
 import EditEventModal from '../components/EditEventModal'
 import EditStudentModal from '../components/EditStudentModal'
 import SkeletonProfile from '../components/studentProfile/SkeletonProfile'
 import ProfileHeader from '../components/studentProfile/ProfileHeader'
 import ContactCard from '../components/studentProfile/ContactCard'
+import EnrollmentHistory from '../components/studentProfile/EnrollmentHistory'
 import Timeline from '../components/studentProfile/Timeline'
 import StudentDocuments from '../components/studentProfile/StudentDocuments'
 
@@ -15,8 +17,9 @@ export default function StudentProfilePage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [student, setStudent]   = useState(null)
-  const [timeline, setTimeline] = useState([])
+  const [student, setStudent]       = useState(null)
+  const [timeline, setTimeline]     = useState([])
+  const [enrollments, setEnrollments] = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState(false)
   const [showModal, setShowModal]           = useState(false)
@@ -29,10 +32,11 @@ export default function StudentProfilePage() {
   const fetchData = useCallback(() => {
     setLoading(true)
     setError(false)
-    Promise.all([getStudent(id), getStudentTimeline(id)])
-      .then(([studentData, timelineData]) => {
+    Promise.all([getStudent(id), getStudentTimeline(id), getStudentEnrollments(id)])
+      .then(([studentData, timelineData, enrollmentData]) => {
         setStudent(studentData)
         setTimeline(timelineData.timeline)
+        setEnrollments(enrollmentData.results ?? enrollmentData)
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false))
@@ -92,6 +96,7 @@ export default function StudentProfilePage() {
             archiveError={archiveError}
           />
           <ContactCard student={student} />
+          <EnrollmentHistory enrollments={enrollments} />
           <Timeline timeline={timeline} onEdit={setEditingEvent} />
           <StudentDocuments studentId={id} studentName={student?.full_name} />
         </>

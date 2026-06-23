@@ -33,6 +33,9 @@ export default function StudentsPage() {
   const [showEditModal, setShowEditModal]     = useState(false)
   const [pendingDeleteId, setPendingDeleteId] = useState(null)
   const [deleting, setDeleting]               = useState(false)
+  // 'active' = enrolled in current year (inactive=false)
+  // 'inactive' = not enrolled in current year (inactive=true)
+  const [activeTab, setActiveTab]             = useState('active')
   const currentPage = useRef(1)
 
   useEffect(() => {
@@ -59,6 +62,7 @@ export default function StudentsPage() {
     if (debouncedSearch) params.search = debouncedSearch
     if (classLevel)      params.class_level = classLevel
     if (classNumber)     params.class_number = classNumber
+    params.inactive = activeTab === 'inactive' ? 'true' : 'false'
 
     getStudents(params)
       .then(data => {
@@ -71,7 +75,7 @@ export default function StudentsPage() {
       .finally(() => { if (!cancelled) setLoading(false) })
 
     return () => { cancelled = true }
-  }, [debouncedSearch, classLevel, classNumber, refreshKey])
+  }, [debouncedSearch, classLevel, classNumber, refreshKey, activeTab])
 
   // Stable load-more callback — only changes when filters or pagination state changes
   const handleLoadMore = useCallback(async () => {
@@ -83,6 +87,7 @@ export default function StudentsPage() {
     if (debouncedSearch) params.search = debouncedSearch
     if (classLevel)      params.class_level = classLevel
     if (classNumber)     params.class_number = classNumber
+    params.inactive = activeTab === 'inactive' ? 'true' : 'false'
 
     try {
       const data = await getStudents(params)
@@ -95,7 +100,7 @@ export default function StudentsPage() {
     } finally {
       setLoadingMore(false)
     }
-  }, [debouncedSearch, classLevel, classNumber, hasMore, loadingMore])
+  }, [debouncedSearch, classLevel, classNumber, hasMore, loadingMore, activeTab])
 
   const handleExport = async () => {
     setExporting(true)
@@ -140,6 +145,37 @@ export default function StudentsPage() {
           onImport={() => setShowImportModal(true)}
           onAdd={() => setShowAddModal(true)}
         />
+
+        {/* Active / Inactive tabs */}
+        <div className="flex gap-1 mb-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl w-fit">
+          <button
+            data-testid="students-tab-active"
+            onClick={() => setActiveTab('active')}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'active'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            }`}
+          >
+            פעילים
+          </button>
+          <button
+            data-testid="students-tab-inactive"
+            onClick={() => setActiveTab('inactive')}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'inactive'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            }`}
+          >
+            לא פעילים
+          </button>
+        </div>
+        {activeTab === 'inactive' && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-4 -mt-2">
+            תלמידים ללא רישום בשנה הנוכחית (כולל בוגרים, עוזבים, מועברים)
+          </p>
+        )}
 
         <StudentsFilterBar
           search={search}
