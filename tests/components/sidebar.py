@@ -37,3 +37,54 @@ class Sidebar(BasePage):
 
         self.page.get_by_test_id("sidebar-link-documents").click()
         return DocumentsPage(self.page)
+
+    # ------------------------------------------------------------------
+    # Admin section (visible only when user.isAdmin === true)
+    # ------------------------------------------------------------------
+
+    def navigate_to_admin_schools(self) -> "AdminSchoolsPage":
+        from pages.admin_schools_page import AdminSchoolsPage
+
+        self.page.get_by_test_id("sidebar-link-admin-schools").click()
+        return AdminSchoolsPage(self.page)
+
+    def navigate_to_admin_counselors(self) -> "AdminCounselorsPage":
+        from pages.admin_counselors_page import AdminCounselorsPage
+
+        self.page.get_by_test_id("sidebar-link-admin-counselors").click()
+        return AdminCounselorsPage(self.page)
+
+    def navigate_to_admin_school_years(self) -> "AdminSchoolYearsPage":
+        from pages.admin_school_years_page import AdminSchoolYearsPage
+
+        self.page.get_by_test_id("sidebar-link-admin-years").click()
+        return AdminSchoolYearsPage(self.page)
+
+    def navigate_to_admin_support(self) -> "AdminSupportPage":
+        from pages.admin_support_page import AdminSupportPage
+
+        self.page.get_by_test_id("sidebar-link-admin-support").click()
+        return AdminSupportPage(self.page)
+
+    # ------------------------------------------------------------------
+    # Counselor (non-admin) support button
+    # ------------------------------------------------------------------
+
+    def open_support_modal(self) -> "SupportModal":
+        from modals.support_modal import SupportModal
+
+        self.page.get_by_test_id("sidebar-support-btn").click()
+        return SupportModal(self.page)
+
+    # ------------------------------------------------------------------
+    # Auth
+    # ------------------------------------------------------------------
+
+    def logout(self) -> "LoginPage":
+        from pages.login_page import LoginPage
+
+        self.page.get_by_test_id("sidebar-logout").click()
+        return LoginPage(self.page)
+
+    def get_username(self) -> str:
+        return self.page.get_by_test_id("sidebar-username").inner_text()
