@@ -1,8 +1,10 @@
+import { PARENTS_STATUS_LABEL } from '../../constants/parentsStatus'
+
 export default function ContactCard({ student }) {
   const hasContact = student && (
     student.mother_name || student.mother_phone ||
     student.father_name || student.father_phone ||
-    student.address
+    student.address || student.parents_status || student.notes
   )
 
   return (
@@ -32,6 +34,22 @@ export default function ContactCard({ student }) {
             <div className="flex items-center gap-3 text-sm">
               <dt className="text-gray-400 w-8 flex-shrink-0">כתובת</dt>
               <dd className="text-gray-700">{student.address}</dd>
+            </div>
+          )}
+          {student.parents_status && (
+            <div className="flex items-center gap-3 text-sm">
+              <dt className="text-gray-400 w-14 flex-shrink-0">מצב משפחתי</dt>
+              <dd className="text-gray-700" data-testid="student-profile-parents-status">
+                {PARENTS_STATUS_LABEL[student.parents_status] ?? student.parents_status}
+              </dd>
+            </div>
+          )}
+          {student.notes && (
+            <div className="flex gap-3 text-sm">
+              <dt className="text-gray-400 w-8 flex-shrink-0 pt-0.5">הערות</dt>
+              <dd className="text-gray-700 whitespace-pre-wrap" data-testid="student-profile-notes">
+                {student.notes}
+              </dd>
             </div>
           )}
         </dl>

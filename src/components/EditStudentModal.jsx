@@ -14,13 +14,15 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
   useEffect(() => {
     if (!isOpen || !student) return
     setForm({
-      full_name:    student.full_name    ?? '',
-      id_number:    student.id_number    ?? '',
-      address:      student.address      ?? '',
-      mother_name:  student.mother_name  ?? '',
-      mother_phone: student.mother_phone ?? '',
-      father_name:  student.father_name  ?? '',
-      father_phone: student.father_phone ?? '',
+      full_name:      student.full_name      ?? '',
+      id_number:      student.id_number      ?? '',
+      address:        student.address        ?? '',
+      notes:          student.notes          ?? '',
+      mother_name:    student.mother_name    ?? '',
+      mother_phone:   student.mother_phone   ?? '',
+      father_name:    student.father_name    ?? '',
+      father_phone:   student.father_phone   ?? '',
+      parents_status: student.parents_status ?? '',
     })
     setFieldErrors({})
   }, [isOpen, student])

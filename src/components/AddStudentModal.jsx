@@ -13,6 +13,7 @@ const INITIAL_FORM = {
   full_name: '',
   id_number: '',
   address: '',
+  notes: '',
   school_year: '',
   class_level: '',
   class_number: '',
@@ -20,6 +21,7 @@ const INITIAL_FORM = {
   mother_phone: '',
   father_name: '',
   father_phone: '',
+  parents_status: '',
 }
 
 export default function AddStudentModal({ isOpen, onClose, onSuccess }) {

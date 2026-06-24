@@ -57,6 +57,20 @@ export default function PersonalFields({ form, fieldErrors, onChange }) {
         />
         <FieldError msg={fieldErrors.address} />
       </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">הערות</label>
+        <textarea
+          name="notes"
+          value={form.notes}
+          onChange={onChange}
+          placeholder="הערות על התלמיד"
+          data-testid="student-notes"
+          className={fieldClass(fieldErrors.notes)}
+          rows={3}
+        />
+        <FieldError msg={fieldErrors.notes} />
+      </div>
     </>
   )
 }

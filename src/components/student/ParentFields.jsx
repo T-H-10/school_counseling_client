@@ -1,4 +1,5 @@
 import { fieldClass, sectionLabel } from '../../utils/formClasses'
+import { PARENTS_STATUS_OPTIONS } from '../../constants/parentsStatus'
 import FieldError from '../ui/FieldError'
 
 export default function ParentFields({ form, fieldErrors, onChange }) {
@@ -67,6 +68,23 @@ export default function ParentFields({ form, fieldErrors, onChange }) {
           />
           <FieldError msg={fieldErrors.father_phone} />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">מצב משפחתי</label>
+        <select
+          name="parents_status"
+          value={form.parents_status}
+          onChange={onChange}
+          data-testid="student-parents-status"
+          className={fieldClass(fieldErrors.parents_status)}
+        >
+          <option value="">בחר מצב...</option>
+          {PARENTS_STATUS_OPTIONS.map(({ value, label }) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
+        <FieldError msg={fieldErrors.parents_status} />
       </div>
     </>
   )

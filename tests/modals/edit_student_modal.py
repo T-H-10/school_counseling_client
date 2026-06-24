@@ -16,6 +16,8 @@ class EditStudentModal(BasePage):
         self.mother_phone_input: Locator = page.get_by_test_id("student-mother-phone")
         self.father_name_input: Locator = page.get_by_test_id("student-father-name")
         self.father_phone_input: Locator = page.get_by_test_id("student-father-phone")
+        self.parents_status_select: Locator = page.get_by_test_id("student-parents-status")
+        self.notes_input: Locator = page.get_by_test_id("student-notes")
         self.submit_btn: Locator = page.get_by_test_id("edit-student-submit")
         self.cancel_btn: Locator = page.get_by_test_id("edit-student-cancel")
         # FieldError <p> has no data-testid; use xpath sibling traversal.

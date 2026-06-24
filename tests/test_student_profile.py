@@ -1,8 +1,10 @@
+import openpyxl
 from datetime import datetime, timedelta
 
 from playwright.sync_api import expect
 
 from components import Sidebar
+from modals.add_student_modal import AddStudentModal
 from pages.student_profile_page import StudentProfilePage
 from utils import random_id_number, unique_suffix
 
@@ -71,6 +73,44 @@ def test_export_triggers_xlsx_download(logged_in_page):
 
     download = dl_info.value
     assert download.suggested_filename.endswith(".xlsx")
+
+
+# SP-06 — Import XLSX Modal Opens and Runs Import Successfully
+def test_import_xlsx_opens_modal_and_succeeds(logged_in_page, tmp_path):
+    active_year = logged_in_page.evaluate("""async () => {
+        const token = localStorage.getItem('accessToken')
+        const resp = await fetch('http://localhost:8000/schoolYears/?is_active=true',
+            { headers: { Authorization: `Bearer ${token}` } })
+        const data = await resp.json()
+        return data.results?.[0]?.name
+    }""")
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["שם מלא", "מספר זהות", "כיתה", "מספר כיתה", "שנת לימודים"])
+    ws.append([f"ייבוא בדיקה {unique_suffix()}", random_id_number(), "א", 1, active_year])
+    xlsx_path = tmp_path / "import.xlsx"
+    wb.save(str(xlsx_path))
+
+    students = Sidebar(logged_in_page).navigate_to_students()
+    logged_in_page.get_by_test_id("students-import").click()
+
+    modal = logged_in_page.get_by_test_id("import-students-modal")
+    modal.wait_for()
+
+    # Submit must be disabled before a file is selected.
+    assert logged_in_page.get_by_test_id("import-students-submit").is_disabled()
+
+    logged_in_page.get_by_test_id("import-students-file").set_input_files(str(xlsx_path))
+    logged_in_page.get_by_test_id("import-students-submit").click()
+    logged_in_page.wait_for_load_state("networkidle")
+
+    results = logged_in_page.get_by_test_id("import-students-results")
+    results.wait_for()
+    assert results.is_visible()
+
+    logged_in_page.get_by_test_id("import-students-done").click()
+    modal.wait_for(state="detached")
 
 
 # SP-07 — Create Event with Non-Default Type Persists the Type Label
@@ -177,3 +217,52 @@ def test_completed_event_status_persists(logged_in_page):
     ).count()
 
     assert count_after == count_before - 1
+
+
+# SP-11 — Parents Status Persists After Edit
+def test_parents_status_persists_after_edit(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+    name = f"מצב משפחתי {unique_suffix()}"
+
+    modal = students.open_add_modal()
+    modal.fill_required(name, random_id_number())
+    students = modal.submit()
+
+    students.search(name)
+    profile = students.get_card_with_name(name).click()
+
+    edit = profile.click_edit()
+    edit.parents_status_select.select_option(value="divorced")
+    edit.submit_btn.click()
+    edit.root.wait_for(state="detached")
+    logged_in_page.wait_for_load_state("networkidle")
+
+    profile = StudentProfilePage(logged_in_page)
+    status_el = logged_in_page.get_by_test_id("student-profile-parents-status")
+    status_el.wait_for()
+    assert status_el.inner_text() == "גרושים"
+
+
+# SP-12 — Notes Persists After Edit
+def test_notes_persists_after_edit(logged_in_page):
+    students = Sidebar(logged_in_page).navigate_to_students()
+    name = f"הערות תלמיד {unique_suffix()}"
+    notes_text = f"הערת בדיקה {unique_suffix()}"
+
+    modal = students.open_add_modal()
+    modal.fill_required(name, random_id_number())
+    students = modal.submit()
+
+    students.search(name)
+    profile = students.get_card_with_name(name).click()
+
+    edit = profile.click_edit()
+    edit.notes_input.fill(notes_text)
+    edit.submit_btn.click()
+    edit.root.wait_for(state="detached")
+    logged_in_page.wait_for_load_state("networkidle")
+
+    profile = StudentProfilePage(logged_in_page)
+    notes_el = logged_in_page.get_by_test_id("student-profile-notes")
+    notes_el.wait_for()
+    assert notes_el.inner_text() == notes_text
