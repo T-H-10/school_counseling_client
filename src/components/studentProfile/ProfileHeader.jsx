@@ -25,6 +25,14 @@ export default function ProfileHeader({
                 כיתה {student.current_class_level}׳ {student.current_class_number}
               </span>
             )}
+            {student.is_graduated && (
+              <span
+                data-testid="student-profile-graduated-badge"
+                className="bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+              >
+                בוגר/ת {student.graduation_year ?? ''}
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-500 font-mono mb-1" data-testid="student-profile-id">ת.ז. {student.id_number}</p>
           {student.current_teacher && (

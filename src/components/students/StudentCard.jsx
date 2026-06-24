@@ -14,9 +14,12 @@ function formatDate(dateStr) {
 export default function StudentCard({ student, onEdit, onDelete }) {
   const navigate = useNavigate()
   const isActive = !!student.current_class_level
-  const classLabel = student.current_class_level
+  const isGraduated = student.is_graduated === true
+  const classLabel = isActive
     ? `כיתה ${student.current_class_level}${student.current_class_number ? ` ${student.current_class_number}` : ''}`
-    : null
+    : isGraduated && student.graduation_year
+      ? `בוגר/ת ${student.graduation_year}`
+      : null
 
   return (
     <div
@@ -29,6 +32,8 @@ export default function StudentCard({ student, onEdit, onDelete }) {
       <div className="flex items-center justify-between mb-3">
         {isActive ? (
           <span className="text-xs font-medium bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full" data-testid="student-card-status">פעילה</span>
+        ) : isGraduated ? (
+          <span className="text-xs font-medium bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400 px-2 py-0.5 rounded-full" data-testid="student-card-status">בוגר/ת</span>
         ) : (
           <span className="text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full" data-testid="student-card-status">לא פעילה</span>
         )}
