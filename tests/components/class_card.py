@@ -21,6 +21,11 @@ class ClassCard(BasePage):
         # Edit mode collapses back to the read-only label once saved.
         expect(self.root_locator.get_by_test_id("class-card-teacher-input")).to_have_count(0)
 
+    def get_student_count(self) -> int:
+        """Parse the student count badge text, e.g. '10 תלמידים' → 10."""
+        badge_text = self.root_locator.locator("span").first.text_content()
+        return int(badge_text.strip().split()[0])
+
     def click(self) -> "ClassDetailPage":
         from pages.class_detail_page import ClassDetailPage
 

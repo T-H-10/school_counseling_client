@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { getStudents, exportStudentsExcel, archiveStudent } from '../api/students'
 import { downloadBlob } from '../utils/downloadBlob'
 import { getClassLevels } from '../api/classLevels'
+import { useDebouncedValue } from '../utils/useDebouncedValue'
 import AddStudentModal from '../components/AddStudentModal'
 import EditStudentModal from '../components/EditStudentModal'
 import ImportStudentsModal from '../components/ImportStudentsModal'
@@ -20,8 +21,8 @@ export default function StudentsPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError]             = useState(false)
   const [hasMore, setHasMore]         = useState(false)
-  const [search, setSearch]           = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [search, setSearch]           = useState(() => searchParams.get('search') || '')
+  const debouncedSearch = useDebouncedValue(search, 400)
   const [classLevel, setClassLevel]   = useState(() => searchParams.get('class_level') || '')
   const [classNumber, setClassNumber] = useState(() => searchParams.get('class_number') || '')
   const [classLevels, setClassLevels] = useState([])
@@ -43,11 +44,6 @@ export default function StudentsPage() {
       .then(res => setClassLevels(res.results ?? []))
       .catch(() => {})
   }, [])
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 400)
-    return () => clearTimeout(timer)
-  }, [search])
 
   // Filter change — always resets to page 1 and replaces results
   useEffect(() => {
